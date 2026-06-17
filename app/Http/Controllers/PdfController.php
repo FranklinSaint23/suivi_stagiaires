@@ -20,7 +20,7 @@ class PdfController extends Controller
     public function carte(Stagiaire $stagiaire)
     {
         $pdf = Pdf::loadView('pdf.carte', compact('stagiaire'))
-            ->setPaper([0, 0, 226.77, 141.73], 'landscape');
+            ->setPaper('a6', 'landscape');
 
         return $pdf->download("carte_{$stagiaire->nom}.pdf");
     }
