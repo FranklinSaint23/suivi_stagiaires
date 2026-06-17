@@ -19,7 +19,16 @@ class PdfController extends Controller
 
     public function carte(Stagiaire $stagiaire)
     {
-        $pdf = Pdf::loadView('pdf.carte', compact('stagiaire'))
+        $photoBase64 = null;
+        if ($stagiaire->photo) {
+            $path = storage_path('app/public/' . $stagiaire->photo);
+            if (file_exists($path)) {
+                $mime = mime_content_type($path) ?: 'image/jpeg';
+                $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+            }
+        }
+
+        $pdf = Pdf::loadView('pdf.carte', compact('stagiaire', 'photoBase64'))
             ->setPaper('a6', 'landscape');
 
         return $pdf->download("carte_{$stagiaire->nom}.pdf");

@@ -112,8 +112,8 @@ body { margin: 0; padding: 0; font-family: DejaVu Sans, sans-serif; background: 
 <table class="body-table">
     <tr>
         <td class="photo-cell">
-            @if($stagiaire->photo)
-                <img class="photo-img" src="{{ 'file://' . storage_path('app/public/' . $stagiaire->photo) }}" alt="photo">
+            @if($photoBase64)
+                <img class="photo-img" src="{{ $photoBase64 }}" alt="photo">
             @else
                 <div class="photo-placeholder">{{ strtoupper(substr($stagiaire->nom, 0, 1)) }}</div>
             @endif
