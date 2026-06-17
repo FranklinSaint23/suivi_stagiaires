@@ -6,13 +6,13 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
+        "barryvdh/laravel-dompdf": "*",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
         "smalot/pdfparser": "^2.12"
     },
     "require-dev": {
-        "barryvdh/laravel-dompdf": "*",
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "*",
         "laravel/pail": "^1.2.5",
