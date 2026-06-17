@@ -1,0 +1,17 @@
+name: Keep App Alive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # toutes les 10 minutes
+  workflow_dispatch:          # déclenchement manuel possible
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping l'application
+        run: |
+          echo "Ping de l'app à $(date)"
+          curl --fail --silent --max-time 30 "${{ secrets.APP_URL }}/up" \
+            && echo "App OK" \
+            || echo "App ne répond pas (peut-être en cours de démarrage)"
