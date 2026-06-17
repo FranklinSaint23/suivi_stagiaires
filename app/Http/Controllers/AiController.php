@@ -16,28 +16,27 @@ class AiController extends Controller
     public function analyseCv(DemandeStage $demande)
     {
         if (!$demande->cv) {
-            return back()->with('ai_error', 'Aucun CV disponible pour cette demande.');
+            return response()->json(['error' => 'Aucun CV disponible pour cette demande.'], 422);
         }
 
         $path = Storage::disk('public')->path($demande->cv);
 
         if (!file_exists($path)) {
-            return back()->with('ai_error', 'Fichier CV introuvable sur le serveur.');
+            return response()->json(['error' => 'Fichier CV introuvable sur le serveur.'], 404);
         }
 
         try {
-            $parser  = new PdfParser();
-            $pdf     = $parser->parseFile($path);
-            $cvText  = $pdf->getText();
+            $parser = new PdfParser();
+            $cvText = $parser->parseFile($path)->getText();
 
             if (strlen(trim($cvText)) < 50) {
-                return back()->with('ai_error', 'Le PDF semble être scanné (pas de texte extractible). Utilisez un PDF texte.');
+                return response()->json(['error' => 'PDF scanné sans texte extractible. Utilisez un PDF texte.'], 422);
             }
 
             $result = $this->ai->analyseCv($cvText, $demande->prenom . ' ' . $demande->nom, $demande->filiere);
-            return back()->with('ai_cv_result', $result);
+            return response()->json(['result' => $result]);
         } catch (\Exception $e) {
-            return back()->with('ai_error', $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -46,7 +45,6 @@ class AiController extends Controller
         try {
             $total    = $stagiaire->presences->count();
             $presents = $stagiaire->presences->where('present', true)->count();
-            $absences = $total - $presents;
 
             $stages = $stagiaire->stages->map(fn($s) => [
                 'theme'         => $s->theme,
@@ -56,13 +54,13 @@ class AiController extends Controller
             $result = $this->ai->rapportPerformance(
                 $stagiaire->toArray(),
                 $stagiaire->taux_presence,
-                $absences,
+                $total - $presents,
                 $stages
             );
 
-            return back()->with('ai_rapport', $result);
+            return response()->json(['result' => $result]);
         } catch (\Exception $e) {
-            return back()->with('ai_error', $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -80,13 +78,13 @@ class AiController extends Controller
             })->toArray();
 
             if (empty($data)) {
-                return back()->with('ai_anomalies', 'Aucun stagiaire enregistré pour l\'analyse.');
+                return response()->json(['result' => 'Aucun stagiaire enregistré pour l\'analyse.']);
             }
 
             $result = $this->ai->detecterAnomalies($data);
-            return back()->with('ai_anomalies', $result);
+            return response()->json(['result' => $result]);
         } catch (\Exception $e) {
-            return back()->with('ai_error', $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

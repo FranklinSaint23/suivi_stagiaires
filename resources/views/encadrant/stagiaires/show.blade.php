@@ -66,33 +66,58 @@
        class="bg-purple-600 text-white px-4 py-2 rounded text-sm hover:bg-purple-700">🪪 Carte PDF</a>
     <a href="{{ route('encadrant.stagiaires.edit', $stagiaire) }}"
        class="bg-yellow-500 text-white px-4 py-2 rounded text-sm hover:bg-yellow-600">✏️ Modifier</a>
-    <form action="{{ route('encadrant.ai.rapport', $stagiaire) }}" method="POST">
-        @csrf
-        <button type="submit"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm font-semibold">
-            🤖 Rapport IA
-        </button>
-    </form>
+    <button onclick="genererRapport()" id="btn-rapport"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm font-semibold">
+        🤖 <span id="btn-rapport-text">Rapport IA</span>
+    </button>
     <a href="{{ route('encadrant.stagiaires.index') }}"
        class="border px-4 py-2 rounded text-sm text-gray-600 hover:bg-gray-50">← Retour</a>
 </div>
 
 {{-- Rapport IA --}}
-@if(session('ai_rapport'))
-<div class="mt-6 bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+<div id="ai-rapport-box" class="hidden mt-6 bg-indigo-50 border border-indigo-200 rounded-xl p-5">
     <div class="flex justify-between items-center mb-3">
         <h3 class="font-bold text-indigo-800">🤖 Rapport de performance IA</h3>
-        <button onclick="window.print()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1 rounded">
-            Imprimer
-        </button>
+        <button onclick="window.print()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1 rounded">Imprimer</button>
     </div>
-    <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ session('ai_rapport') }}</div>
+    <div id="ai-rapport-text" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line"></div>
 </div>
-@endif
-
-@if(session('ai_error'))
-<div class="mt-4 bg-red-50 border border-red-300 text-red-700 rounded-xl p-4 text-sm">
-    ⚠️ {{ session('ai_error') }}
-</div>
-@endif
+<div id="ai-rapport-error" class="hidden mt-4 bg-red-50 border border-red-300 text-red-700 rounded-xl p-4 text-sm"></div>
 @endsection
+
+@push('scripts')
+<script>
+async function genererRapport() {
+    const btn = document.getElementById('btn-rapport');
+    const txt = document.getElementById('btn-rapport-text');
+    const box = document.getElementById('ai-rapport-box');
+    const err = document.getElementById('ai-rapport-error');
+
+    btn.disabled = true;
+    txt.textContent = 'Génération…';
+    box.classList.add('hidden');
+    err.classList.add('hidden');
+
+    try {
+        const r = await fetch('{{ route('encadrant.ai.rapport', $stagiaire) }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+        });
+        const data = await r.json();
+        if (data.result) {
+            document.getElementById('ai-rapport-text').textContent = data.result;
+            box.classList.remove('hidden');
+        } else {
+            err.textContent = '⚠️ ' + (data.error ?? 'Erreur inconnue');
+            err.classList.remove('hidden');
+        }
+    } catch(e) {
+        err.textContent = '⚠️ Erreur de connexion.';
+        err.classList.remove('hidden');
+    } finally {
+        btn.disabled = false;
+        txt.textContent = 'Rapport IA';
+    }
+}
+</script>
+@endpush

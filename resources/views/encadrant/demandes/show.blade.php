@@ -34,13 +34,10 @@
         @if($demande->cv)
             <a href="{{ asset('storage/' . $demande->cv) }}" target="_blank"
                class="block mb-2 text-purple-700 underline text-sm">📄 Voir le CV</a>
-            <form action="{{ route('encadrant.ai.analyse_cv', $demande) }}" method="POST" class="mt-3">
-                @csrf
-                <button type="submit"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center justify-center gap-2">
-                    <span>🤖</span> Analyser le CV avec l'IA
-                </button>
-            </form>
+            <button onclick="analyserCv()" id="btn-cv"
+                    class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center justify-center gap-2">
+                <span>🤖</span> <span id="btn-cv-text">Analyser le CV avec l'IA</span>
+            </button>
         @endif
         @if($demande->lettre)
             <a href="{{ asset('storage/' . $demande->lettre) }}" target="_blank"
@@ -54,18 +51,11 @@
 </div>
 
 {{-- Résultat analyse CV IA --}}
-@if(session('ai_cv_result'))
-<div class="mt-6 bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+<div id="ai-cv-result" class="hidden mt-6 bg-indigo-50 border border-indigo-200 rounded-xl p-5">
     <h3 class="font-bold text-indigo-800 mb-3">🤖 Analyse IA du CV</h3>
-    <div class="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{{ session('ai_cv_result') }}</div>
+    <div id="ai-cv-text" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed"></div>
 </div>
-@endif
-
-@if(session('ai_error'))
-<div class="mt-4 bg-red-50 border border-red-300 text-red-700 rounded-xl p-4 text-sm">
-    ⚠️ {{ session('ai_error') }}
-</div>
-@endif
+<div id="ai-cv-error" class="hidden mt-4 bg-red-50 border border-red-300 text-red-700 rounded-xl p-4 text-sm"></div>
 
 @if($demande->etat === 'En attente')
 <div class="mt-6 flex gap-3">
@@ -98,3 +88,40 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+async function analyserCv() {
+    const btn = document.getElementById('btn-cv');
+    const txt = document.getElementById('btn-cv-text');
+    const res = document.getElementById('ai-cv-result');
+    const err = document.getElementById('ai-cv-error');
+
+    btn.disabled = true;
+    txt.textContent = 'Analyse en cours…';
+    res.classList.add('hidden');
+    err.classList.add('hidden');
+
+    try {
+        const r = await fetch('{{ route('encadrant.ai.analyse_cv', $demande) }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+        });
+        const data = await r.json();
+        if (data.result) {
+            document.getElementById('ai-cv-text').textContent = data.result;
+            res.classList.remove('hidden');
+        } else {
+            err.textContent = '⚠️ ' + (data.error ?? 'Erreur inconnue');
+            err.classList.remove('hidden');
+        }
+    } catch(e) {
+        err.textContent = '⚠️ Erreur de connexion.';
+        err.classList.remove('hidden');
+    } finally {
+        btn.disabled = false;
+        txt.textContent = 'Analyser le CV avec l\'IA';
+    }
+}
+</script>
+@endpush
