@@ -9,20 +9,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'nom'       => 'Administrateur',
-            'matricule' => 'ADMIN001',
-            'email'     => 'admin@suivi.cm',
-            'password'  => bcrypt('admin123'),
-            'role'      => 'admin',
+        User::firstOrCreate(['matricule' => 'ADMIN001'], [
+            'nom'      => 'Administrateur',
+            'email'    => 'admin@suivi.cm',
+            'password' => bcrypt('admin123'),
+            'role'     => 'admin',
         ]);
 
-        User::create([
-            'nom'       => 'Encadrant Principal',
-            'matricule' => 'ENC001',
-            'email'     => 'encadrant@suivi.cm',
-            'password'  => bcrypt('enc123'),
-            'role'      => 'encadrant',
+        User::firstOrCreate(['matricule' => 'ENC001'], [
+            'nom'      => 'Encadrant Principal',
+            'email'    => 'encadrant@suivi.cm',
+            'password' => bcrypt('enc123'),
+            'role'     => 'encadrant',
         ]);
     }
 }
