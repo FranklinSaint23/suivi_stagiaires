@@ -20,12 +20,11 @@ class PdfController extends Controller
     public function carte(Stagiaire $stagiaire)
     {
         $photoBase64 = null;
-        if ($stagiaire->photo) {
-            $path = storage_path('app/public/' . $stagiaire->photo);
-            if (file_exists($path)) {
-                $mime = mime_content_type($path) ?: 'image/jpeg';
-                $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
-            }
+        if ($stagiaire->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($stagiaire->photo)) {
+            $content     = \Illuminate\Support\Facades\Storage::disk('public')->get($stagiaire->photo);
+            $ext         = strtolower(pathinfo($stagiaire->photo, PATHINFO_EXTENSION));
+            $mime        = match($ext) { 'png' => 'image/png', 'gif' => 'image/gif', default => 'image/jpeg' };
+            $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode($content);
         }
 
         $pdf = Pdf::loadView('pdf.carte', compact('stagiaire', 'photoBase64'))

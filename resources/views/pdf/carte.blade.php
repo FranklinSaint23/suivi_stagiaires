@@ -132,14 +132,6 @@ body { margin: 0; padding: 0; font-family: DejaVu Sans, sans-serif; background: 
                     <td>{{ $stagiaire->sexe }}</td>
                 </tr>
                 <tr class="info-row">
-                    <td class="info-label">Né(e) le :</td>
-                    <td>{{ $stagiaire->naissance?->format('d/m/Y') }}</td>
-                </tr>
-                <tr class="info-row">
-                    <td class="info-label">Lieu naiss. :</td>
-                    <td>{{ $stagiaire->lieu_naissance }}</td>
-                </tr>
-                <tr class="info-row">
                     <td class="info-label">Téléphone :</td>
                     <td>{{ $stagiaire->telephone }}</td>
                 </tr>
