@@ -61,41 +61,61 @@ class DemandeStageController extends Controller
     {
         $request->validate(['password' => 'required|string|min:6']);
 
-        $password = $request->input('password');
+        if ($demande->etat === 'Validée') {
+            return redirect()->route('encadrant.demandes.index')
+                ->with('error', 'Cette demande a déjà été validée.');
+        }
 
-        DB::transaction(function () use ($demande, $password) {
-            $stagiaire = Stagiaire::create([
-                'sexe'      => $demande->sexe,
-                'nom'       => $demande->nom,
-                'prenom'    => $demande->prenom,
-                'telephone' => $demande->telephone,
-                'email'     => $demande->email,
-                'password'  => bcrypt($password),
-                'photo'     => $demande->photo,
-                'lieu'      => $demande->lieu,
-                'filiere'   => $demande->filiere,
-            ]);
+        $password  = $request->input('password');
+        $matricule = null;
 
-            $year      = date('Y');
-            $matricule = 'STG' . $year . str_pad($stagiaire->id, 4, '0', STR_PAD_LEFT);
+        try {
+            DB::transaction(function () use ($demande, $password, &$matricule) {
+                // Évite doublon stagiaire
+                $stagiaire = Stagiaire::where('email', $demande->email)->first();
+                if (!$stagiaire) {
+                    $stagiaire = Stagiaire::create([
+                        'sexe'      => $demande->sexe,
+                        'nom'       => $demande->nom,
+                        'prenom'    => $demande->prenom,
+                        'telephone' => $demande->telephone ?? '',
+                        'email'     => $demande->email,
+                        'password'  => bcrypt($password),
+                        'photo'     => $demande->photo,
+                        'lieu'      => $demande->lieu,
+                        'filiere'   => $demande->filiere,
+                    ]);
+                }
 
-            User::create([
-                'nom'       => $demande->prenom . ' ' . $demande->nom,
-                'matricule' => $matricule,
-                'email'     => $demande->email,
-                'password'  => bcrypt($password),
-                'role'      => 'stagiaire',
-            ]);
+                $year      = date('Y');
+                $matricule = 'STG' . $year . str_pad($stagiaire->id, 4, '0', STR_PAD_LEFT);
 
-            $demande->update(['etat' => 'Validée', 'mot_de_passe' => bcrypt($password)]);
-        });
+                // Évite doublon user
+                $user = User::where('email', $demande->email)->first();
+                if (!$user) {
+                    User::create([
+                        'nom'       => $demande->prenom . ' ' . $demande->nom,
+                        'matricule' => $matricule,
+                        'email'     => $demande->email,
+                        'password'  => bcrypt($password),
+                        'role'      => 'stagiaire',
+                    ]);
+                }
 
-        $stagiaire = Stagiaire::where('email', $demande->email)->first();
-        $user      = User::where('email', $demande->email)->first();
-        $waLink    = WhatsAppHelper::credentialsLink($demande->telephone, $demande->prenom, $user->matricule, $password);
+                $demande->update(['etat' => 'Validée', 'mot_de_passe' => bcrypt($password)]);
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Erreur lors de la validation : ' . $e->getMessage());
+        }
+
+        $telephone = $demande->telephone ?? '';
+        $waLink    = $telephone
+            ? WhatsAppHelper::credentialsLink($telephone, $demande->prenom, $matricule, $password)
+            : null;
 
         return redirect()->route('encadrant.demandes.index')
-            ->with('success', 'Demande validée.')
+            ->with('success', 'Demande validée. Matricule : ' . $matricule)
             ->with('whatsapp_link', $waLink);
     }
 
