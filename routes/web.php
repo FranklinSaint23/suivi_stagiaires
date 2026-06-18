@@ -17,6 +17,13 @@ use Illuminate\Support\Facades\Route;
 // Redirection racine
 Route::get('/', fn() => redirect()->route('login'));
 
+// Serveur de fichiers uploadés (bypass symlink — fonctionne sur tous les hébergeurs)
+Route::get('/fichier/{path}', function (string $path) {
+    $fullPath = storage_path('app/public/' . $path);
+    abort_unless(file_exists($fullPath), 404);
+    return response()->file($fullPath);
+})->where('path', '.*')->middleware('auth')->name('fichier');
+
 // Auth
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

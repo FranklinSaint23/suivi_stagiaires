@@ -9,7 +9,7 @@
     <div class="bg-white rounded-xl shadow p-5">
         <h2 class="font-semibold text-gray-700 mb-4">Informations personnelles</h2>
         @if($demande->photo)
-            <img src="{{ asset('storage/' . $demande->photo) }}" class="w-24 h-24 rounded-full object-cover mb-4">
+            <img src="{{ route('fichier', ['path' => $demande->photo]) }}" class="w-24 h-24 rounded-full object-cover mb-4">
         @endif
         <dl class="space-y-2 text-sm">
             <div class="flex"><dt class="w-28 text-gray-500">Sexe</dt><dd>{{ $demande->sexe }}</dd></div>
@@ -32,7 +32,7 @@
     <div class="bg-white rounded-xl shadow p-5">
         <h2 class="font-semibold text-gray-700 mb-4">Documents</h2>
         @if($demande->cv)
-            <a href="{{ asset('storage/' . $demande->cv) }}" target="_blank"
+            <a href="{{ route('fichier', ['path' => $demande->cv]) }}" target="_blank"
                class="block mb-2 text-purple-700 underline text-sm">📄 Voir le CV</a>
             <button onclick="analyserCv()" id="btn-cv"
                     class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center justify-center gap-2">
@@ -40,11 +40,11 @@
             </button>
         @endif
         @if($demande->lettre)
-            <a href="{{ asset('storage/' . $demande->lettre) }}" target="_blank"
+            <a href="{{ route('fichier', ['path' => $demande->lettre]) }}" target="_blank"
                class="block mt-2 mb-2 text-purple-700 underline text-sm">📄 Lettre de motivation</a>
         @endif
         @if($demande->certificat)
-            <a href="{{ asset('storage/' . $demande->certificat) }}" target="_blank"
+            <a href="{{ route('fichier', ['path' => $demande->certificat]) }}" target="_blank"
                class="block mb-2 text-purple-700 underline text-sm">📄 Certificat de scolarité</a>
         @endif
     </div>

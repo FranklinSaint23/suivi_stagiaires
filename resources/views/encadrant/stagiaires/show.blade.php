@@ -5,7 +5,7 @@
 @section('content')
 <div class="flex items-center gap-4 mb-6">
     @if($stagiaire->photo)
-        <img src="{{ asset('storage/' . $stagiaire->photo) }}" class="w-20 h-20 rounded-full object-cover shadow">
+        <img src="{{ route('fichier', ['path' => $stagiaire->photo]) }}" class="w-20 h-20 rounded-full object-cover shadow">
     @else
         <div class="w-20 h-20 rounded-full bg-purple-200 flex items-center justify-center text-purple-700 text-2xl font-bold shadow">
             {{ strtoupper(substr($stagiaire->nom, 0, 1)) }}

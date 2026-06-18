@@ -55,7 +55,7 @@
             <div class="col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nouvelle photo (optionnel)</label>
                 @if($stagiaire->photo)
-                    <img src="{{ asset('storage/' . $stagiaire->photo) }}" class="w-16 h-16 rounded-full object-cover mb-2">
+                    <img src="{{ route('fichier', ['path' => $stagiaire->photo]) }}" class="w-16 h-16 rounded-full object-cover mb-2">
                 @endif
                 <input type="file" name="photo" accept="image/*" class="w-full border rounded px-3 py-2 text-sm">
             </div>

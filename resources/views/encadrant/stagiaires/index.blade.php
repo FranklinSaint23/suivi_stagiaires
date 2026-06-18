@@ -52,7 +52,7 @@
             <tr class="hover:bg-gray-50">
                 <td class="px-4 py-3">
                     @if($s->photo)
-                        <img src="{{ asset('storage/' . $s->photo) }}" class="w-10 h-10 rounded-full object-cover">
+                        <img src="{{ route('fichier', ['path' => $s->photo]) }}" class="w-10 h-10 rounded-full object-cover">
                     @else
                         <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center text-purple-700 font-bold">
                             {{ strtoupper(substr($s->nom, 0, 1)) }}
