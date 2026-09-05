@@ -12,6 +12,8 @@ jobs:
       - name: Ping l'application
         run: |
           echo "Ping de l'app à $(date)"
-          curl --fail --silent --max-time 30 "${{ secrets.APP_URL }}/up" \
+          URL="${{ secrets.APP_URL }}"
+          URL="${URL%/}/up"
+          curl --fail --silent --show-error --max-time 60 --retry 2 "$URL" \
             && echo "App OK" \
-            || echo "App ne répond pas (peut-être en cours de démarrage)"
+            || echo "App ne répond pas (encore en cours de démarrage)"
