@@ -1,88 +1,123 @@
 @extends('layouts.app')
-@section('title', 'Gestion des utilisateurs')
+@section('title', 'Gestion des Utilisateurs')
 
 @section('sidebar')
-    <p class="text-xs uppercase text-purple-300 mb-3 px-2">Admin</p>
-    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded hover:bg-purple-700 text-sm">📊 Dashboard</a>
-    <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded bg-purple-700 text-sm font-semibold">👤 Utilisateurs</a>
+<div class="px-3 py-2 mb-2">
+    <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Administration</p>
+</div>
+<div class="space-y-1 font-medium text-sm">
+    <a href="{{ route('admin.dashboard') }}" 
+       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150 {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white' }}">
+        <i class="fa-solid fa-chart-line w-5 text-center text-base {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-indigo-400' }}"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="{{ route('admin.users.index') }}" 
+       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150 {{ request()->routeIs('admin.users.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white' }}">
+        <i class="fa-solid fa-user-shield w-5 text-center text-base {{ request()->routeIs('admin.users.*') ? 'text-white' : 'text-purple-400' }}"></i>
+        <span>Gestion Utilisateurs</span>
+    </a>
+</div>
 @endsection
 
 @section('content')
-<h1 class="text-2xl font-bold text-purple-900 mb-6">Gestion des utilisateurs</h1>
-
-{{-- Alerte mot de passe temporaire --}}
-@if(session('temp_password'))
-<div class="mb-6 bg-yellow-50 border border-yellow-400 rounded-xl p-5">
-    <p class="font-bold text-yellow-800 text-base mb-1">Mot de passe réinitialisé</p>
-    <p class="text-yellow-700 text-sm mb-3">
-        Compte : <strong>{{ session('reset_user') }}</strong>
-    </p>
-    <div class="flex items-center gap-3 mb-3">
-        <span class="text-sm text-gray-600">Nouveau mot de passe temporaire :</span>
-        <code id="tempPwd" class="bg-white border border-yellow-300 px-3 py-1 rounded font-mono text-lg font-bold text-purple-900 tracking-widest">
-            {{ session('temp_password') }}
-        </code>
-        <button onclick="copyTempPwd()" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-800 px-2 py-1 rounded">
-            Copier
-        </button>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
+                <i class="fa-solid fa-user-gear text-indigo-400"></i>
+                <span>Gestion des <span class="gradient-text">Utilisateurs</span></span>
+            </h1>
+            <p class="text-sm text-slate-400 mt-1">Gérez les comptes d'accès, rôles et réinitialisations de mot de passe</p>
+        </div>
     </div>
-    <p class="text-xs text-yellow-600">Ce mot de passe n'est affiché qu'une seule fois. Communiquez-le à l'utilisateur via WhatsApp.</p>
-    @if(session('user_phone'))
-        @php
-            $phone = preg_replace('/\D/', '', session('user_phone'));
-            $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application Suivi Stagiaires.');
-        @endphp
-        <a href="{{ $wa }}" target="_blank"
-           class="inline-block mt-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg">
-            Envoyer via WhatsApp
-        </a>
-    @endif
-</div>
-@endif
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-purple-900 text-white">
-            <tr>
-                <th class="px-4 py-3 text-left">Matricule</th>
-                <th class="px-4 py-3 text-left">Nom</th>
-                <th class="px-4 py-3 text-left">Email</th>
-                <th class="px-4 py-3 text-left">Rôle</th>
-                <th class="px-4 py-3 text-center">Action</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse($users as $user)
-            <tr class="hover:bg-purple-50">
-                <td class="px-4 py-3 font-mono font-semibold text-purple-800">{{ $user->matricule }}</td>
-                <td class="px-4 py-3">{{ $user->nom }}</td>
-                <td class="px-4 py-3 text-gray-500">{{ $user->email ?? '—' }}</td>
-                <td class="px-4 py-3">
-                    @php
-                        $colors = ['admin' => 'bg-red-100 text-red-700', 'encadrant' => 'bg-blue-100 text-blue-700', 'stagiaire' => 'bg-green-100 text-green-700'];
-                    @endphp
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $colors[$user->role] ?? '' }}">
-                        {{ ucfirst($user->role) }}
-                    </span>
-                </td>
-                <td class="px-4 py-3 text-center">
-                    <form action="{{ route('admin.users.reset_password', $user) }}" method="POST"
-                          onsubmit="return confirm('Réinitialiser le mot de passe de {{ addslashes($user->nom) }} ?')">
-                        @csrf
-                        <button type="submit"
-                                class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
-                            Réinitialiser mdp
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" class="px-4 py-6 text-center text-gray-400">Aucun utilisateur.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+    {{-- Temp Password Alert --}}
+    @if(session('temp_password'))
+    <div class="glass-panel border border-amber-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden space-y-3">
+        <div class="flex items-center gap-2 text-amber-400 font-bold text-base">
+            <i class="fa-solid fa-key"></i> Mot de passe temporaire généré
+        </div>
+        <p class="text-slate-300 text-sm">
+            Compte concerné : <strong class="text-white">{{ session('reset_user') }}</strong>
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+            <span class="text-xs text-slate-400 uppercase font-semibold">Nouveau mot de passe :</span>
+            <code id="tempPwd" class="bg-slate-900 border border-slate-700 px-3.5 py-1.5 rounded-xl font-mono text-base font-bold text-indigo-300 tracking-widest">
+                {{ session('temp_password') }}
+            </code>
+            <button onclick="copyTempPwd()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-medium transition">
+                <i class="fa-solid fa-copy mr-1"></i> Copier
+            </button>
+        </div>
+        <p class="text-xs text-slate-400">Ce mot de passe est affiché une seule fois. Transmettez-le à l'utilisateur.</p>
+        @if(session('user_phone'))
+            @php
+                $phone = preg_replace('/\D/', '', session('user_phone'));
+                $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application Suivi Stagiaires.');
+            @endphp
+            <a href="{{ $wa }}" target="_blank"
+               class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+                <i class="fa-brands fa-whatsapp text-sm"></i> Envoyer via WhatsApp
+            </a>
+        @endif
+    </div>
+    @endif
+
+    <!-- Table Container -->
+    <div class="glass-panel rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-4 py-3.5">Matricule</th>
+                        <th class="px-4 py-3.5">Nom</th>
+                        <th class="px-4 py-3.5">Email</th>
+                        <th class="px-4 py-3.5">Rôle</th>
+                        <th class="px-4 py-3.5 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                    @forelse($users as $user)
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="px-4 py-3 font-mono font-bold text-indigo-400">{{ $user->matricule }}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-100">{{ $user->nom }}</td>
+                        <td class="px-4 py-3 text-slate-400 text-xs">{{ $user->email ?? '—' }}</td>
+                        <td class="px-4 py-3">
+                            @php
+                                $colors = [
+                                    'admin' => 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+                                    'encadrant' => 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+                                    'stagiaire' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                ];
+                            @endphp
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border {{ $colors[$user->role] ?? 'bg-slate-800 text-slate-300' }}">
+                                {{ ucfirst($user->role) }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <form action="{{ route('admin.users.reset_password', $user) }}" method="POST"
+                                  onsubmit="return confirm('Réinitialiser le mot de passe de {{ addslashes($user->nom) }} ?')">
+                                @csrf
+                                <button type="submit"
+                                        class="inline-flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-amber-500/20 transition">
+                                    <i class="fa-solid fa-key"></i> Réinitialiser mdp
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-4 py-12 text-center text-slate-400">
+                            <i class="fa-solid fa-users-slash text-4xl mb-3 opacity-30 block"></i>
+                            <p class="text-sm font-medium">Aucun utilisateur.</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -94,3 +129,4 @@ function copyTempPwd() {
 }
 </script>
 @endpush
+
