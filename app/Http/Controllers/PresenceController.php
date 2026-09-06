@@ -25,7 +25,7 @@ class PresenceController extends Controller
             $presencesMap[$s->id] = $rows;
         }
 
-        $nbJours = cal_days_in_month(CAL_GREGORIAN, $mois, $annee);
+        $nbJours = \Carbon\Carbon::createFromDate($annee, $mois, 1)->daysInMonth;
 
         return view('encadrant.presences.index', compact(
             'stagiaires', 'presencesMap', 'mois', 'annee', 'nbJours'

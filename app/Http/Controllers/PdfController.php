@@ -39,7 +39,7 @@ class PdfController extends Controller
         $annee = $request->integer('annee', now()->year);
 
         $stagiaires = Stagiaire::orderBy('nom')->get();
-        $nbJours    = cal_days_in_month(CAL_GREGORIAN, $mois, $annee);
+        $nbJours    = \Carbon\Carbon::createFromDate($annee, $mois, 1)->daysInMonth;
 
         $presencesMap = [];
         foreach ($stagiaires as $s) {
