@@ -13,6 +13,21 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        $middleware->redirectTo(
+            guests: '/login',
+            users: function (Request $request) {
+                $user = $request->user();
+                if ($user) {
+                    return match ($user->role) {
+                        'admin'     => route('admin.dashboard'),
+                        'encadrant' => route('encadrant.dashboard'),
+                        'stagiaire' => route('stagiaire.dashboard'),
+                        default     => route('login'),
+                    };
+                }
+                return route('login');
+            }
+        );
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);

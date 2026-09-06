@@ -14,8 +14,18 @@ use App\Http\Controllers\GeolocationController;
 use App\Http\Controllers\AiController;
 use Illuminate\Support\Facades\Route;
 
-// Redirection racine
-Route::get('/', fn() => redirect()->route('login'));
+// Redirection racine intelligente selon le rôle de l'utilisateur connecté
+Route::get('/', function () {
+    if (auth()->check()) {
+        return match (auth()->user()->role) {
+            'admin'     => redirect()->route('admin.dashboard'),
+            'encadrant' => redirect()->route('encadrant.dashboard'),
+            'stagiaire' => redirect()->route('stagiaire.dashboard'),
+            default     => redirect()->route('login'),
+        };
+    }
+    return redirect()->route('login');
+});
 
 // Serveur de fichiers uploadés (bypass symlink — fonctionne sur tous les hébergeurs)
 Route::get('/fichier/{path}', function (string $path) {
