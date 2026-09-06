@@ -27,12 +27,40 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Serveur de fichiers uploadés (bypass symlink — fonctionne sur tous les hébergeurs)
+// Serveur de fichiers uploadés (bypass symlink & résolution multi-chemins)
 Route::get('/fichier/{path}', function (string $path) {
-    $fullPath = storage_path('app/public/' . $path);
-    abort_unless(file_exists($fullPath), 404);
-    return response()->file($fullPath);
-})->where('path', '.*')->middleware('auth')->name('fichier');
+    $cleanPath = ltrim(str_replace('storage/', '', $path), '/');
+
+    $possiblePaths = [
+        storage_path('app/public/' . $cleanPath),
+        public_path('storage/' . $cleanPath),
+        public_path($cleanPath),
+        storage_path('app/' . $cleanPath),
+    ];
+
+    foreach ($possiblePaths as $fullPath) {
+        if (file_exists($fullPath) && is_file($fullPath)) {
+            return response()->file($fullPath);
+        }
+    }
+
+    $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
+    if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+            <defs>
+                <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4f46e5"/>
+                    <stop offset="100%" stop-color="#7c3aed"/>
+                </linearGradient>
+            </defs>
+            <rect width="128" height="128" rx="64" fill="url(#g)"/>
+            <path d="M64 36 a18 18 0 1 0 0.1 0 Z M36 94 c0-15 12-26 28-26 s28 11 28 26 Z" fill="#ffffff" opacity="0.9"/>
+        </svg>';
+        return response($svg, 200, ['Content-Type' => 'image/svg+xml']);
+    }
+
+    abort(404, 'Fichier introuvable sur le serveur.');
+})->where('path', '.*')->name('fichier');
 
 // Auth
 Route::middleware('guest')->group(function () {

@@ -19,10 +19,24 @@ class AiController extends Controller
             return response()->json(['error' => 'Aucun CV disponible pour cette demande.'], 422);
         }
 
-        $path = Storage::disk('public')->path($demande->cv);
+        $cleanPath = ltrim(str_replace('storage/', '', $demande->cv), '/');
+        $possiblePaths = [
+            storage_path('app/public/' . $cleanPath),
+            public_path('storage/' . $cleanPath),
+            public_path($cleanPath),
+            storage_path('app/' . $cleanPath),
+        ];
 
-        if (!file_exists($path)) {
-            return response()->json(['error' => 'Fichier CV introuvable sur le serveur.'], 404);
+        $path = null;
+        foreach ($possiblePaths as $p) {
+            if (file_exists($p) && is_file($p)) {
+                $path = $p;
+                break;
+            }
+        }
+
+        if (!$path) {
+            return response()->json(['error' => 'Fichier CV introuvable sur le serveur (le fichier a pu être réinitialisé lors d\'un redémarrage de l\'hébergeur). Veuillez ré-uploader le CV.'], 404);
         }
 
         try {

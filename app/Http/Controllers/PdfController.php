@@ -20,11 +20,24 @@ class PdfController extends Controller
     public function carte(Stagiaire $stagiaire)
     {
         $photoBase64 = null;
-        if ($stagiaire->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($stagiaire->photo)) {
-            $content     = \Illuminate\Support\Facades\Storage::disk('public')->get($stagiaire->photo);
-            $ext         = strtolower(pathinfo($stagiaire->photo, PATHINFO_EXTENSION));
-            $mime        = match($ext) { 'png' => 'image/png', 'gif' => 'image/gif', default => 'image/jpeg' };
-            $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode($content);
+        if ($stagiaire->photo) {
+            $cleanPath = ltrim(str_replace('storage/', '', $stagiaire->photo), '/');
+            $possiblePaths = [
+                storage_path('app/public/' . $cleanPath),
+                public_path('storage/' . $cleanPath),
+                public_path($cleanPath),
+                storage_path('app/' . $cleanPath),
+            ];
+
+            foreach ($possiblePaths as $fullPath) {
+                if (file_exists($fullPath) && is_file($fullPath)) {
+                    $content     = file_get_contents($fullPath);
+                    $ext         = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+                    $mime        = match($ext) { 'png' => 'image/png', 'gif' => 'image/gif', default => 'image/jpeg' };
+                    $photoBase64 = 'data:' . $mime . ';base64,' . base64_encode($content);
+                    break;
+                }
+            }
         }
 
         $pdf = Pdf::loadView('pdf.carte', compact('stagiaire', 'photoBase64'))
