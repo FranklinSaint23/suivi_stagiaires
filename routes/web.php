@@ -15,6 +15,8 @@ use App\Http\Controllers\AiController;
 use App\Http\Controllers\ObjectifController;
 use App\Http\Controllers\RapportPeriodiqueController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Admin\EncadrantManagerController;
+use App\Http\Controllers\Admin\StagiaireManagerController;
 use Illuminate\Support\Facades\Route;
 
 // Redirection racine intelligente selon le rôle de l'utilisateur connecté
@@ -88,6 +90,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/utilisateurs', [AdminController::class, 'users'])->name('users.index');
     Route::post('/utilisateurs/{user}/reset-password', [AdminController::class, 'resetPassword'])->name('users.reset_password');
+
+    // Encadrants CRUD
+    Route::resource('encadrants', EncadrantManagerController::class);
+    Route::post('/encadrants/{encadrant}/reset-password', [EncadrantManagerController::class, 'resetPassword'])->name('encadrants.reset_password');
+
+    // Stagiaires CRUD
+    Route::resource('stagiaires', StagiaireManagerController::class);
+    Route::post('/stagiaires/{stagiaire}/reset-password', [StagiaireManagerController::class, 'resetPassword'])->name('stagiaires.reset_password');
 });
 
 // Encadrant
