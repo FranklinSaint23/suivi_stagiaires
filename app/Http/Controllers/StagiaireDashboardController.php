@@ -19,6 +19,8 @@ class StagiaireDashboardController extends Controller
 
         $presences = [];
         $messages  = [];
+        $objectifs = collect();
+        $rapports  = collect();
 
         if ($stagiaire) {
             $presences = Presence::where('stagiaire_id', $stagiaire->id)
@@ -32,8 +34,13 @@ class StagiaireDashboardController extends Controller
                 ->with('reponses')
                 ->latest()
                 ->get();
+
+            $objectifs = $stagiaire->objectifs()->latest()->get();
+            $rapports  = $stagiaire->rapports()->latest()->get();
         }
 
-        return view('stagiaire.dashboard', compact('stagiaire', 'presences', 'messages', 'mois', 'annee'));
+        return view('stagiaire.dashboard', compact(
+            'stagiaire', 'presences', 'messages', 'objectifs', 'rapports', 'mois', 'annee'
+        ));
     }
 }

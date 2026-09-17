@@ -43,7 +43,112 @@
         </div>
     </div>
 
-    <!-- Content Grid -->
+    <!-- Progression & Quick Stats Header Bar -->
+    <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-indigo-400"></i> Ma Progression Globale de Stage
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5">Calculé automatiquement selon vos présences, vos objectifs et vos rapports validés</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-3xl font-extrabold {{ ($stagiaire?->progression_globale ?? 0) >= 75 ? 'text-emerald-400' : 'text-indigo-400' }}">
+                    {{ $stagiaire?->progression_globale ?? 0 }}%
+                </span>
+            </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+            <div class="h-full rounded-full transition-all duration-700 gradient-bg-primary" style="width: {{ min(100, max(0, $stagiaire?->progression_globale ?? 0)) }}%"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Taux de présence</span>
+                <span class="font-bold text-emerald-400">{{ $stagiaire?->taux_presence ?? 0 }}%</span>
+            </div>
+            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Objectifs complétés</span>
+                <span class="font-bold text-amber-300">{{ $objectifs->where('statut', 'Terminé')->count() }} / {{ $objectifs->count() }}</span>
+            </div>
+            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                <span class="text-slate-400 font-medium">Rapports validés</span>
+                <span class="font-bold text-cyan-400">{{ $rapports->where('statut', 'Validé')->count() }} / {{ $rapports->count() }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Objectives & Reports Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Objectives Widget -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+                <h2 class="font-bold text-slate-100 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-amber-400"></i> Mes Objectifs de Stage
+                </h2>
+                <span class="text-xs text-slate-400">{{ $objectifs->where('statut', 'Terminé')->count() }} sur {{ $objectifs->count() }} réalisés</span>
+            </div>
+
+            <div class="space-y-3">
+                @forelse($objectifs as $obj)
+                    <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-slate-100 text-sm {{ $obj->statut === 'Terminé' ? 'line-through text-slate-400' : '' }}">{{ $obj->titre }}</h3>
+                            <form action="{{ route('stagiaire.objectifs.update_statut', $obj) }}" method="POST">
+                                @csrf
+                                <select name="statut" onchange="this.form.submit()" class="text-xs bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
+                                    <option value="À faire" {{ $obj->statut === 'À faire' ? 'selected' : '' }}>À faire</option>
+                                    <option value="En cours" {{ $obj->statut === 'En cours' ? 'selected' : '' }}>En cours</option>
+                                    <option value="Terminé" {{ $obj->statut === 'Terminé' ? 'selected' : '' }}>Terminé ✅</option>
+                                </select>
+                            </form>
+                        </div>
+                        @if($obj->description)
+                            <p class="text-xs text-slate-400 leading-relaxed">{{ $obj->description }}</p>
+                        @endif
+                        @if($obj->date_limite)
+                            <p class="text-[11px] text-slate-500 font-mono">Échéance : {{ $obj->date_limite->format('d/m/Y') }}</p>
+                        @endif
+                    </div>
+                @empty
+                    <p class="text-slate-400 text-sm py-4 text-center">Aucun objectif assigné pour le moment.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Periodic Reports Quick Action Widget -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+                <h2 class="font-bold text-slate-100 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature text-cyan-400"></i> Rapports Périodiques
+                </h2>
+                <a href="{{ route('stagiaire.rapports.create') }}" class="gradient-bg-primary text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow">
+                    + Nouveau rapport
+                </a>
+            </div>
+
+            <div class="space-y-3">
+                @forelse($rapports->take(3) as $r)
+                    <div class="glass-card p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-slate-100 text-sm">{{ $r->titre }}</p>
+                            <p class="text-xs text-slate-400">{{ $r->periode }} • Soumis le {{ $r->date_soumission->format('d/m/Y') }}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $r->statut === 'Validé' ? 'bg-emerald-500/20 text-emerald-400' : ($r->statut === 'Correction demandée' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-300') }}">
+                            {{ $r->statut }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="text-center py-6 text-slate-400 text-sm space-y-2">
+                        <p>Aucun rapport d'activité soumis.</p>
+                        <a href="{{ route('stagiaire.rapports.create') }}" class="text-xs text-indigo-400 underline">Soumettre mon premier rapport</a>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Mes Présences Card -->
         <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col justify-between">

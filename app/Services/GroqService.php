@@ -109,4 +109,19 @@ class GroqService
 
         return $this->chat($messages, 512);
     }
+
+    public function analyseRapport(string $contenuRapport, string $nomStagiaire, string $filiere, string $periode = 'Hebdomadaire'): string
+    {
+        return $this->chat([
+            ['role' => 'system', 'content' => 'Tu es un tuteur pédagogique et responsable de stage expert. Tu analyses les rapports d\'activités des stagiaires.'],
+            ['role' => 'user',   'content' =>
+                "Analyse ce rapport {$periode} soumis par le stagiaire {$nomStagiaire} (Filière: {$filiere}).\n\n"
+                . "=== Contenu du Rapport ===\n{$contenuRapport}\n=== Fin du Rapport ===\n\n"
+                . "Donne une réponse structurée et concise en français :\n"
+                . "1. **Résumé des activités** (2-3 phrases synthétiques)\n"
+                . "2. **Points d'attention / Difficultés identifiées**\n"
+                . "3. **Recommandations & Conseils pour l'Encadrant**",
+            ],
+        ], 800);
+    }
 }

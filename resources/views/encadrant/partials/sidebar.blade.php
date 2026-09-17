@@ -28,8 +28,20 @@
     </a>
 
     <div class="pt-4 pb-1 px-3">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Présences & Suivi</p>
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Présences & Suivi Continu</p>
     </div>
+
+    <a href="{{ route('encadrant.objectifs.index') }}" 
+       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150 {{ request()->routeIs('encadrant.objectifs.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white' }}">
+        <i class="fa-solid fa-bullseye w-5 text-center text-base {{ request()->routeIs('encadrant.objectifs.*') ? 'text-white' : 'text-amber-400' }}"></i>
+        <span>Objectifs</span>
+    </a>
+
+    <a href="{{ route('encadrant.rapports.index') }}" 
+       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150 {{ request()->routeIs('encadrant.rapports.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white' }}">
+        <i class="fa-solid fa-file-signature w-5 text-center text-base {{ request()->routeIs('encadrant.rapports.*') ? 'text-white' : 'text-cyan-400' }}"></i>
+        <span>Rapports Périodiques</span>
+    </a>
 
     <a href="{{ route('encadrant.presences.create') }}" 
        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150 {{ request()->routeIs('encadrant.presences.create') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white' }}">

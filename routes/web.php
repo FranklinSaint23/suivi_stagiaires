@@ -12,6 +12,9 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\GeolocationController;
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\ObjectifController;
+use App\Http\Controllers\RapportPeriodiqueController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 // Redirection racine intelligente selon le rôle de l'utilisateur connecté
@@ -69,6 +72,13 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Notifications globales
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{notification}/lire', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/tout-lire', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+});
+
 // Demande de stage publique
 Route::get('/demande-stage', [DemandeStageController::class, 'publicForm'])->name('demande.form');
 Route::post('/demande-stage', [DemandeStageController::class, 'publicStore'])->name('demande.store');
@@ -89,6 +99,17 @@ Route::middleware(['auth', 'role:encadrant'])->prefix('encadrant')->name('encadr
 
     // Stages
     Route::resource('stages', StageController::class)->except(['show']);
+
+    // Objectifs
+    Route::get('/objectifs', [ObjectifController::class, 'index'])->name('objectifs.index');
+    Route::post('/objectifs', [ObjectifController::class, 'store'])->name('objectifs.store');
+    Route::delete('/objectifs/{objectif}', [ObjectifController::class, 'destroy'])->name('objectifs.destroy');
+
+    // Rapports périodiques
+    Route::get('/rapports', [RapportPeriodiqueController::class, 'indexEncadrant'])->name('rapports.index');
+    Route::get('/rapports/{rapport}', [RapportPeriodiqueController::class, 'showEncadrant'])->name('rapports.show');
+    Route::post('/rapports/{rapport}/valider', [RapportPeriodiqueController::class, 'validerEncadrant'])->name('rapports.valider');
+    Route::post('/rapports/{rapport}/analyse-ia', [RapportPeriodiqueController::class, 'analyserIa'])->name('rapports.analyse_ia');
 
     // Demandes de stage
     Route::get('/demandes', [DemandeStageController::class, 'index'])->name('demandes.index');
@@ -124,6 +145,15 @@ Route::middleware(['auth', 'role:encadrant'])->prefix('encadrant')->name('encadr
 // Stagiaire
 Route::middleware(['auth', 'role:stagiaire'])->prefix('stagiaire')->name('stagiaire.')->group(function () {
     Route::get('/dashboard', [StagiaireDashboardController::class, 'index'])->name('dashboard');
+
+    // Objectifs
+    Route::post('/objectifs/{objectif}/statut', [ObjectifController::class, 'updateStatut'])->name('objectifs.update_statut');
+
+    // Rapports
+    Route::get('/rapports', [RapportPeriodiqueController::class, 'indexStagiaire'])->name('rapports.index');
+    Route::get('/rapports/creer', [RapportPeriodiqueController::class, 'createStagiaire'])->name('rapports.create');
+    Route::post('/rapports', [RapportPeriodiqueController::class, 'storeStagiaire'])->name('rapports.store');
+
     Route::post('/messages', [MessageController::class, 'storeFromStagiaire'])->name('messages.store');
     Route::get('/pdf/presences', [PdfController::class, 'presences'])->name('pdf.presences');
     Route::get('/geolocaliser', [GeolocationController::class, 'myLocation'])->name('geolocaliser');
