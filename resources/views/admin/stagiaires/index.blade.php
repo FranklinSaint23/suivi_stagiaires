@@ -85,7 +85,7 @@
                             <td class="px-5 py-4 font-bold text-slate-100">
                                 <div class="flex items-center gap-3">
                                     @if($stg->photo)
-                                        <img src="{{ asset('storage/' . $stg->photo) }}" alt="Photo" class="w-10 h-10 rounded-full object-cover border border-indigo-500/30">
+                                        <img src="{{ route('fichier', ['path' => $stg->photo]) }}" alt="Photo" class="w-10 h-10 rounded-full object-cover border border-indigo-500/30">
                                     @else
                                         <div class="w-10 h-10 rounded-full gradient-bg-primary flex items-center justify-center text-white text-xs font-bold">
                                             {{ strtoupper(substr($stg->prenom, 0, 1) . substr($stg->nom, 0, 1)) }}

@@ -99,6 +99,12 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-slate-200 mb-2">Changer la Photo de profil</label>
+                    @if($stagiaire->photo)
+                        <div class="flex items-center gap-3 mb-2">
+                            <img src="{{ route('fichier', ['path' => $stagiaire->photo]) }}" alt="Photo actuelle" class="w-12 h-12 rounded-full object-cover border border-slate-700">
+                            <span class="text-xs text-slate-400">Photo actuelle</span>
+                        </div>
+                    @endif
                     <input type="file" name="photo" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-300 text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
                 </div>
             </div>
