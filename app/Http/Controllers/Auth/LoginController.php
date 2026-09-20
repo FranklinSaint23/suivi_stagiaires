@@ -49,4 +49,49 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function submitForgotPassword(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|string',
+        ], [
+            'identifier.required' => 'Veuillez saisir votre adresse email ou votre matricule.',
+        ]);
+
+        $identifier = trim($request->input('identifier'));
+
+        $user = \App\Models\User::where('email', $identifier)
+            ->orWhere('matricule', $identifier)
+            ->first();
+
+        if ($user) {
+            // Notify Admins
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                \App\Models\AppNotification::create([
+                    'user_id' => $admin->id,
+                    'titre'   => 'Demande de réinitialisation mdp',
+                    'message' => "L'utilisateur {$user->nom} (Matricule: {$user->matricule}, Email: {$user->email}) a demandé la réinitialisation de son mot de passe.",
+                    'type'    => 'warning',
+                    'lien'    => route('admin.users.index'),
+                ]);
+            }
+
+            $waText = urlencode("Bonjour Administrateur, je sollicite la réinitialisation du mot de passe pour mon compte Suivi Stagiaires : {$user->nom} (Matricule: {$user->matricule}).");
+            $waUrl  = "https://wa.me/237699000000?text={$waText}";
+
+            return back()->with([
+                'success'        => 'Votre demande de réinitialisation a été enregistrée et transmise à l\'administrateur.',
+                'user_found'     => $user->nom,
+                'whatsapp_link'  => $waUrl,
+            ]);
+        }
+
+        return back()->with('error', 'Aucun compte trouvé correspondant à cet identifiant (Email ou Matricule). Vérifiez vos informations ou contactez l\'administration.');
+    }
 }

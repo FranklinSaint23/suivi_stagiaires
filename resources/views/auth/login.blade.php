@@ -81,8 +81,10 @@
 
             <div class="mt-6 pt-6 border-t border-slate-800/80 space-y-2 text-center text-xs text-slate-400">
                 <p class="flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-slate-500"></i>
-                    Mot de passe oublié ? Contactez votre administrateur.
+                    <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+                    <a href="{{ route('password.request') }}" class="text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-4 transition">
+                        Mot de passe oublié ?
+                    </a>
                 </p>
                 <p>
                     Pas de compte ? 

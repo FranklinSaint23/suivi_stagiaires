@@ -19,17 +19,9 @@ use App\Http\Controllers\Admin\EncadrantManagerController;
 use App\Http\Controllers\Admin\StagiaireManagerController;
 use Illuminate\Support\Facades\Route;
 
-// Redirection racine intelligente selon le rôle de l'utilisateur connecté
+// Page d'accueil publique (Landing Page)
 Route::get('/', function () {
-    if (auth()->check()) {
-        return match (auth()->user()->role) {
-            'admin'     => redirect()->route('admin.dashboard'),
-            'encadrant' => redirect()->route('encadrant.dashboard'),
-            'stagiaire' => redirect()->route('stagiaire.dashboard'),
-            default     => redirect()->route('login'),
-        };
-    }
-    return redirect()->route('login');
+    return view('landing');
 });
 
 // Serveur de fichiers uploadés (bypass symlink & résolution multi-chemins)
@@ -71,6 +63,8 @@ Route::get('/fichier/{path}', function (string $path) {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/forgot-password', [LoginController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [LoginController::class, 'submitForgotPassword'])->name('password.email');
 });
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 

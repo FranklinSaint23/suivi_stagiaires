@@ -49,6 +49,14 @@
                     {{ $r->contenu }}
                 </div>
 
+                @if($r->fichier)
+                    <div class="pt-1">
+                        <a href="{{ route('fichier', ['path' => $r->fichier]) }}" target="_blank" class="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-3.5 py-2 rounded-xl transition">
+                            <i class="fa-solid fa-file-pdf text-rose-400 text-sm"></i> Consulter le document joint
+                        </a>
+                    </div>
+                @endif
+
                 @if($r->commentaire_encadrant)
                     <div class="bg-indigo-500/10 border border-indigo-500/30 p-4 rounded-xl space-y-1">
                         <p class="text-xs font-bold text-indigo-300 flex items-center gap-2">

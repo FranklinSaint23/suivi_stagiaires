@@ -108,7 +108,13 @@ class RapportPeriodiqueController extends Controller
             'titre'   => 'required|string|max:255',
             'periode' => 'required|string',
             'contenu' => 'required|string|min:20',
-            'fichier' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'fichier' => 'nullable|file|max:10240',
+        ], [
+            'titre.required'   => 'Le titre du rapport est obligatoire.',
+            'periode.required' => 'Veuillez sélectionner la période concernée.',
+            'contenu.required' => 'Le compte-rendu doit contenir au moins 20 caractères.',
+            'contenu.min'      => 'Le compte-rendu doit contenir au moins 20 caractères.',
+            'fichier.max'      => 'La taille du document ne doit pas dépasser 10 Mo.',
         ]);
 
         $stagiaire = Stagiaire::where('email', auth()->user()->email)->firstOrFail();
@@ -119,7 +125,12 @@ class RapportPeriodiqueController extends Controller
         $data['statut']       = 'Soumis';
 
         if ($request->hasFile('fichier')) {
-            $data['fichier'] = $request->file('fichier')->store('uploads', 'public');
+            $file = $request->file('fichier');
+            $ext  = strtolower($file->getClientOriginalExtension());
+            if (!in_array($ext, ['pdf', 'doc', 'docx'])) {
+                return back()->withErrors(['fichier' => 'Format de fichier non accepté. Veuillez télécharger un fichier PDF, DOC ou DOCX.'])->withInput();
+            }
+            $data['fichier'] = $file->store('uploads', 'public');
         }
 
         $rapport = RapportPeriodique::create($data);
