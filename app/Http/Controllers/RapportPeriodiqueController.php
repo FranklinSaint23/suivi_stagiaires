@@ -104,6 +104,14 @@ class RapportPeriodiqueController extends Controller
 
     public function storeStagiaire(Request $request)
     {
+        if (isset($_FILES['fichier']) && $_FILES['fichier']['error'] !== UPLOAD_ERR_NO_FILE && $_FILES['fichier']['error'] !== UPLOAD_ERR_OK) {
+            $err = $_FILES['fichier']['error'];
+            if ($err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE) {
+                return back()->withErrors(['fichier' => 'Le fichier téléversé dépasse la limite autorisée par le serveur web (Code PHP: UPLOAD_ERR_INI_SIZE). Veuillez choisir un fichier de moins de 10 Mo.'])->withInput();
+            }
+            return back()->withErrors(['fichier' => "Erreur de téléversement (Code PHP: $err). Veuillez réessayer."])->withInput();
+        }
+
         $data = $request->validate([
             'titre'   => 'required|string|max:255',
             'periode' => 'required|string',
@@ -136,7 +144,7 @@ class RapportPeriodiqueController extends Controller
             $file = $request->file('fichier');
 
             if (!$file->isValid()) {
-                return back()->withErrors(['fichier' => 'Le fichier n\'a pas pu être téléversé (erreur de transfert ou fichier trop volumineux).'])->withInput();
+                return back()->withErrors(['fichier' => 'Le fichier n\'a pas pu être téléversé (erreur de transfert).'])->withInput();
             }
 
             $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension());

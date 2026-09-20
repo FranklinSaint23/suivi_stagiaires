@@ -26,22 +26,32 @@ Route::get('/', function () {
 
 // Serveur de fichiers uploadés (bypass symlink & résolution multi-chemins)
 Route::get('/fichier/{path}', function (string $path) {
-    $cleanPath = ltrim(str_replace('storage/', '', $path), '/');
+    $normalized = str_replace('\\', '/', urldecode($path));
+    $cleanPath  = ltrim(str_replace(['storage/', 'public/'], '', $normalized), '/');
+    $filename   = basename($cleanPath);
 
     $possiblePaths = [
         storage_path('app/public/' . $cleanPath),
-        public_path('storage/' . $cleanPath),
-        public_path($cleanPath),
+        storage_path('app/public/uploads/' . $filename),
         storage_path('app/' . $cleanPath),
+        storage_path('app/uploads/' . $filename),
+        public_path('storage/' . $cleanPath),
+        public_path('storage/uploads/' . $filename),
+        public_path('uploads/' . $filename),
+        public_path($cleanPath),
     ];
 
     foreach ($possiblePaths as $fullPath) {
-        if (file_exists($fullPath) && is_file($fullPath)) {
-            return response()->file($fullPath);
+        if (!empty($fullPath) && file_exists($fullPath) && is_file($fullPath)) {
+            $mime = mime_content_type($fullPath) ?: 'application/pdf';
+            return response()->file($fullPath, [
+                'Content-Type'        => $mime,
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ]);
         }
     }
 
-    $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
             <defs>
@@ -56,7 +66,7 @@ Route::get('/fichier/{path}', function (string $path) {
         return response($svg, 200, ['Content-Type' => 'image/svg+xml']);
     }
 
-    abort(404, 'Fichier introuvable sur le serveur.');
+    abort(404, "Le fichier '$filename' est introuvable sur le serveur.");
 })->where('path', '.*')->name('fichier');
 
 // Auth
