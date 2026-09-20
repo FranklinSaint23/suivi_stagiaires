@@ -66,9 +66,14 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <i class="fa-solid fa-key text-sm"></i>
                         </div>
-                        <input type="password" name="password"
-                               class="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 border border-slate-700/80 rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
+                        <input type="password" id="passwordInput" name="password"
+                               class="w-full pl-10 pr-10 py-2.5 bg-slate-900/80 border border-slate-700/80 rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
                                placeholder="••••••••" required>
+                        <button type="button" onclick="togglePasswordVisibility('passwordInput', this)"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 transition focus:outline-none"
+                                title="Afficher / Masquer le mot de passe">
+                            <i class="fa-solid fa-eye text-sm" id="pwdEyeIcon"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -100,6 +105,21 @@
         </p>
     </div>
 
+    <script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash', 'text-indigo-400');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash', 'text-indigo-400');
+            icon.classList.add('fa-eye');
+        }
+    }
+    </script>
 </body>
 </html>
 
