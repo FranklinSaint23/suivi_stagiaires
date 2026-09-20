@@ -48,6 +48,32 @@
         </a>
     </div>
 
+    {{-- Reset Password Requests Alert --}}
+    @if(isset($resetRequests) && $resetRequests->count() > 0)
+    <div class="glass-panel border border-amber-500/40 bg-amber-500/10 rounded-2xl p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+            <h3 class="font-bold text-amber-300 text-sm sm:text-base flex items-center gap-2">
+                <i class="fa-solid fa-bell text-amber-400 animate-bounce"></i>
+                Demandes de réinitialisation de mot de passe en attente ({{ $resetRequests->count() }})
+            </h3>
+            <a href="{{ route('admin.users.index') }}" class="text-xs text-amber-400 hover:underline font-semibold">Gérer dans Utilisateurs →</a>
+        </div>
+        <div class="divide-y divide-amber-500/20">
+            @foreach($resetRequests as $req)
+                <div class="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm">
+                    <div>
+                        <p class="font-bold text-slate-100">{{ $req->message }}</p>
+                        <p class="text-slate-400 text-xs mt-0.5"><i class="fa-regular fa-clock mr-1"></i> {{ $req->created_at->diffForHumans() }}</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold transition inline-flex items-center gap-1.5 self-start sm:self-auto">
+                        <i class="fa-solid fa-key"></i> Réinitialiser mdp
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Metric Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <div class="glass-panel p-5 rounded-2xl border border-slate-800 relative overflow-hidden group hover:border-purple-500/50 transition duration-300">

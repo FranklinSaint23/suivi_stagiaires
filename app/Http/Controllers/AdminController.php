@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Stagiaire;
 use App\Models\DemandeStage;
 use App\Models\Presence;
+use App\Models\AppNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -33,17 +34,30 @@ class AdminController extends Controller
             ];
         });
 
+        $resetRequests = AppNotification::where('user_id', auth()->id())
+            ->where('titre', 'like', '%réinitialisation%')
+            ->where('lu', false)
+            ->latest()
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalUsers', 'totalStagiaires', 'totalDemandes',
             'demandesValidees', 'demandesRefusees', 'demandesAttente',
-            'attendanceRate', 'presencesData'
+            'attendanceRate', 'presencesData', 'resetRequests'
         ));
     }
 
     public function users()
     {
         $users = User::orderBy('role')->orderBy('nom')->get();
-        return view('admin.utilisateurs.index', compact('users'));
+
+        $resetRequests = AppNotification::where('user_id', auth()->id())
+            ->where('titre', 'like', '%réinitialisation%')
+            ->where('lu', false)
+            ->latest()
+            ->get();
+
+        return view('admin.utilisateurs.index', compact('users', 'resetRequests'));
     }
 
     public function resetPassword(User $user)
@@ -57,12 +71,18 @@ class AdminController extends Controller
                 ->update(['password' => Hash::make($tempPassword)]);
         }
 
+        // Marquer les notifications de demande comme lues pour cet utilisateur
+        AppNotification::where('user_id', auth()->id())
+            ->where('titre', 'like', '%réinitialisation%')
+            ->where('message', 'like', "%{$user->nom}%")
+            ->update(['lu' => true]);
+
         return back()->with([
             'reset_user'    => $user->nom . ' (' . $user->matricule . ')',
             'temp_password' => $tempPassword,
             'user_phone'    => $user->role === 'stagiaire'
                 ? optional(Stagiaire::where('email', $user->email)->first())->telephone
-                : null,
+                : '692739565',
         ]);
     }
 }

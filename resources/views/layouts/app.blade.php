@@ -49,6 +49,18 @@
                         </span>
                     </div>
 
+                    @php
+                        $unreadNotifsCount = \App\Models\AppNotification::where('user_id', auth()->id())->where('lu', false)->count();
+                    @endphp
+                    <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition" title="Notifications">
+                        <i class="fa-solid fa-bell text-lg text-indigo-400"></i>
+                        @if($unreadNotifsCount > 0)
+                            <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center animate-pulse border-2 border-slate-900">
+                                {{ $unreadNotifsCount > 9 ? '9+' : $unreadNotifsCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <div class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 font-semibold text-sm">
                         <i class="fa-solid fa-user-gear"></i>
                     </div>

@@ -42,6 +42,34 @@
         </div>
     </div>
 
+    {{-- Reset Password Requests Alert --}}
+    @if(isset($resetRequests) && $resetRequests->count() > 0)
+    <div class="glass-panel border border-amber-500/40 bg-amber-500/10 rounded-2xl p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+            <h3 class="font-bold text-amber-300 text-sm sm:text-base flex items-center gap-2">
+                <i class="fa-solid fa-bell text-amber-400 animate-bounce"></i>
+                Demandes de réinitialisation de mot de passe en attente ({{ $resetRequests->count() }})
+            </h3>
+            <a href="{{ route('notifications.index') }}" class="text-xs text-amber-400 hover:underline font-semibold">Voir toutes</a>
+        </div>
+        <div class="divide-y divide-amber-500/20">
+            @foreach($resetRequests as $req)
+                <div class="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm">
+                    <div>
+                        <p class="font-bold text-slate-100">{{ $req->message }}</p>
+                        <p class="text-slate-400 text-xs mt-0.5"><i class="fa-regular fa-clock mr-1"></i> Reçue {{ $req->created_at->diffForHumans() }}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('notifications.read', $req) }}" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-check"></i> Traiter
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     {{-- Temp Password Alert --}}
     @if(session('temp_password'))
     <div class="glass-panel border border-amber-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden space-y-3">
@@ -61,16 +89,15 @@
             </button>
         </div>
         <p class="text-xs text-slate-400">Ce mot de passe est affiché une seule fois. Transmettez-le à l'utilisateur.</p>
-        @if(session('user_phone'))
-            @php
-                $phone = preg_replace('/\D/', '', session('user_phone'));
-                $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application Suivi Stagiaires.');
-            @endphp
-            <a href="{{ $wa }}" target="_blank"
-               class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
-                <i class="fa-brands fa-whatsapp text-sm"></i> Envoyer via WhatsApp
-            </a>
-        @endif
+        @php
+            $rawPhone = session('user_phone') ?: '692739565';
+            $phone = preg_replace('/\D/', '', $rawPhone);
+            $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application Suivi Stagiaires.');
+        @endphp
+        <a href="{{ $wa }}" target="_blank"
+           class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+            <i class="fa-brands fa-whatsapp text-sm"></i> Envoyer via WhatsApp
+        </a>
     </div>
     @endif
 

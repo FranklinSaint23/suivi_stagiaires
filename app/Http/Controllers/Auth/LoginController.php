@@ -82,8 +82,8 @@ class LoginController extends Controller
                 ]);
             }
 
-            $waText = urlencode("Bonjour Administrateur, je sollicite la réinitialisation du mot de passe pour mon compte Suivi Stagiaires : {$user->nom} (Matricule: {$user->matricule}).");
-            $waUrl  = "https://wa.me/237699000000?text={$waText}";
+            $waText = urlencode("Bonjour Administrateur, je sollicite la réinitialisation du mot de passe pour mon compte Suivi Stagiaires : {$user->nom} (Matricule: {$user->matricule}, Email: {$user->email}).");
+            $waUrl  = "https://wa.me/237692739565?text={$waText}";
 
             return back()->with([
                 'success'        => 'Votre demande de réinitialisation a été enregistrée et transmise à l\'administrateur.',

@@ -37,26 +37,35 @@
                 <div>
                     <label class="block text-sm font-semibold text-slate-200 mb-2">Période concernée *</label>
                     <select name="periode" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
-                        <option value="Hebdomadaire">Hebdomadaire (Semaine)</option>
-                        <option value="Bimensuel">Bimensuel (Quinzaine)</option>
-                        <option value="Mensuel">Mensuel (Mois)</option>
+                        <option value="Hebdomadaire" {{ old('periode') == 'Hebdomadaire' ? 'selected' : '' }}>Hebdomadaire (Semaine)</option>
+                        <option value="Bimensuel" {{ old('periode') == 'Bimensuel' ? 'selected' : '' }}>Bimensuel (Quinzaine)</option>
+                        <option value="Mensuel" {{ old('periode') == 'Mensuel' ? 'selected' : '' }}>Mensuel (Mois)</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-slate-200 mb-2">Titre du rapport *</label>
-                    <input type="text" name="titre" required placeholder="Ex: Rapport Semaine 3 - Travaux de laboratoire..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" name="titre" value="{{ old('titre') }}" required placeholder="Ex: Rapport Semaine 3 - Travaux de laboratoire..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                    @error('titre')
+                        <p class="text-rose-400 text-xs mt-1.5 font-semibold">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-slate-200 mb-2">Compte-rendu détaillé des activités *</label>
-                <textarea name="contenu" rows="8" required placeholder="Décrivez les compétences acquises, les tâches accomplies et les éventuels blocages rencontrés..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 leading-relaxed"></textarea>
+                <textarea name="contenu" rows="8" required placeholder="Décrivez les compétences acquises, les tâches accomplies et les éventuels blocages rencontrés..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 leading-relaxed">{{ old('contenu') }}</textarea>
+                @error('contenu')
+                    <p class="text-rose-400 text-xs mt-1.5 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-slate-200 mb-2">Pièce jointe / Document PDF (Optionnel)</label>
-                <input type="file" name="fichier" accept=".pdf,.doc,.docx" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-300 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600/30 file:text-indigo-300 hover:file:bg-indigo-600/40">
+                <label class="block text-sm font-semibold text-slate-200 mb-2">Pièce jointe / Document PDF (Optionnel, Max 10 Mo)</label>
+                <input type="file" name="fichier" accept=".pdf,.doc,.docx" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-300 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600/30 file:text-indigo-300 hover:file:bg-indigo-600/40 cursor-pointer">
+                @error('fichier')
+                    <p class="text-rose-400 text-xs mt-1.5 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> {{ $message }}</p>
+                @enderror
             </div>
 
             <div class="pt-4 border-t border-slate-800 flex justify-end gap-4">

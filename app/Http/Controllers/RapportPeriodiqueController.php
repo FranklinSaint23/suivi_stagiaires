@@ -117,7 +117,15 @@ class RapportPeriodiqueController extends Controller
             'fichier.max'      => 'La taille du document ne doit pas dépasser 10 Mo.',
         ]);
 
-        $stagiaire = Stagiaire::where('email', auth()->user()->email)->firstOrFail();
+        $user = auth()->user();
+        $stagiaire = Stagiaire::where('email', $user->email)->first();
+        if (!$stagiaire) {
+            $stagiaire = Stagiaire::where('nom', 'like', "%{$user->nom}%")->first();
+        }
+        if (!$stagiaire) {
+            return back()->withErrors(['titre' => 'Profil stagiaire introuvable. Veuillez contacter l\'administration.'])->withInput();
+        }
+
         $latestStage = $stagiaire->stages()->latest()->first();
 
         $data['stagiaire_id'] = $stagiaire->id;
@@ -126,10 +134,21 @@ class RapportPeriodiqueController extends Controller
 
         if ($request->hasFile('fichier')) {
             $file = $request->file('fichier');
-            $ext  = strtolower($file->getClientOriginalExtension());
-            if (!in_array($ext, ['pdf', 'doc', 'docx'])) {
-                return back()->withErrors(['fichier' => 'Format de fichier non accepté. Veuillez télécharger un fichier PDF, DOC ou DOCX.'])->withInput();
+
+            if (!$file->isValid()) {
+                return back()->withErrors(['fichier' => 'Le fichier n\'a pas pu être téléversé (erreur de transfert ou fichier trop volumineux).'])->withInput();
             }
+
+            $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension());
+            if (!in_array($ext, ['pdf', 'doc', 'docx'])) {
+                return back()->withErrors(['fichier' => "Le format [.$ext] n'est pas autorisé. Seuls les fichiers PDF, DOC et DOCX sont acceptés."])->withInput();
+            }
+
+            $uploadDir = storage_path('app/public/uploads');
+            if (!file_exists($uploadDir)) {
+                @mkdir($uploadDir, 0777, true);
+            }
+
             $data['fichier'] = $file->store('uploads', 'public');
         }
 
