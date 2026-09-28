@@ -78,7 +78,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-slate-200 mb-2">Filière / Spécialité</label>
-                    <input type="text" name="filiere" value="{{ old('filiere') }}" placeholder="Ex: Génie Logiciel" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" name="filiere" value="{{ old('filiere') }}" placeholder="Ex: ID1, ID2, ID3, AS" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div>

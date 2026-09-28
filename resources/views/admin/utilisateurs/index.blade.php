@@ -92,7 +92,7 @@
         @php
             $rawPhone = session('user_phone') ?: '692739565';
             $phone = preg_replace('/\D/', '', $rawPhone);
-            $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application Suivi Stagiaires.');
+            $wa = 'https://wa.me/237' . ltrim($phone, '0') . '?text=' . urlencode('Votre nouveau mot de passe temporaire : ' . session('temp_password') . ' — Connectez-vous sur l\'application StageTrack.');
         @endphp
         <a href="{{ $wa }}" target="_blank"
            class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">

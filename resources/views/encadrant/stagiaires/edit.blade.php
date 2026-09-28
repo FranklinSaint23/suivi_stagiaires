@@ -26,7 +26,7 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Filière</label>
                     <select name="filiere" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500">
-                        @foreach(['IDE1','IDE2','IDE3','AS'] as $f)
+                        @foreach(['ID1','ID2','ID3','IDE1','IDE2','IDE3','AS'] as $f)
                             <option value="{{ $f }}" {{ $stagiaire->filiere == $f ? 'selected' : '' }} class="bg-slate-900 text-slate-100">{{ $f }}</option>
                         @endforeach
                     </select>

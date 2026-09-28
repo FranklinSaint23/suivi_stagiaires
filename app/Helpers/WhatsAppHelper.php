@@ -12,7 +12,7 @@ class WhatsAppHelper
         } elseif (!str_starts_with($phone, '237')) {
             $phone = '237' . $phone;
         }
-        $message = urlencode("Bonjour $prenom, votre compte est créé.\nMatricule : $matricule\nMot de passe : $password");
+        $message = urlencode("Bonjour $prenom, votre compte StageTrack a été créé avec succès.\nMatricule : $matricule\nMot de passe : $password");
         return "https://wa.me/$phone?text=$message";
     }
 

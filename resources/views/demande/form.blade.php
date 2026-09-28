@@ -3,13 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demande de Stage | Suivi Stagiaires</title>
+    <title>Demande de Stage | StageTrack</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 font-sans relative overflow-x-hidden">
 
@@ -88,6 +109,9 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Filière *</label>
                         <select name="filiere" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="ID1" class="bg-slate-900 text-slate-100">ID1</option>
+                            <option value="ID2" class="bg-slate-900 text-slate-100">ID2</option>
+                            <option value="ID3" class="bg-slate-900 text-slate-100">ID3</option>
                             <option value="IDE1" class="bg-slate-900 text-slate-100">IDE1</option>
                             <option value="IDE2" class="bg-slate-900 text-slate-100">IDE2</option>
                             <option value="IDE3" class="bg-slate-900 text-slate-100">IDE3</option>

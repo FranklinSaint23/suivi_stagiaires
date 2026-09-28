@@ -29,6 +29,9 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Filière</label>
                     <select name="filiere" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500">
+                        <option value="ID1" class="bg-slate-900 text-slate-100">ID1</option>
+                        <option value="ID2" class="bg-slate-900 text-slate-100">ID2</option>
+                        <option value="ID3" class="bg-slate-900 text-slate-100">ID3</option>
                         <option value="IDE1" class="bg-slate-900 text-slate-100">IDE1</option>
                         <option value="IDE2" class="bg-slate-900 text-slate-100">IDE2</option>
                         <option value="IDE3" class="bg-slate-900 text-slate-100">IDE3</option>

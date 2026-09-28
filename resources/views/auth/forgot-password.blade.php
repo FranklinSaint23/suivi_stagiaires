@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mot de passe oublié | Suivi Stagiaires</title>
+    <title>Mot de passe oublié | StageTrack</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
                 <i class="fa-solid fa-graduation-cap text-3xl text-white"></i>
             </a>
             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Suivi<span class="gradient-text">Stagiaires</span>
+                Stage<span class="gradient-text">Track</span>
             </h1>
             <p class="text-sm text-slate-400 mt-1">Récupération de compte & assistance</p>
         </div>
@@ -103,7 +103,7 @@
         </div>
 
         <p class="text-center text-[11px] text-slate-400 mt-8">
-            &copy; {{ date('Y') }} Suivi Stagiaires — Support & Récupération
+            &copy; {{ date('Y') }} StageTrack — Support & Récupération
         </p>
     </div>
 
