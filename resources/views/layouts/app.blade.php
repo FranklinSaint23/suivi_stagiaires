@@ -90,9 +90,17 @@
                         @endif
                     </a>
 
-                    <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
+                    @php
+                        $userDashboardRoute = match(auth()->user()->role ?? '') {
+                            'admin' => route('admin.dashboard'),
+                            'encadrant' => route('encadrant.dashboard'),
+                            'stagiaire' => route('stagiaire.dashboard'),
+                            default => '#'
+                        };
+                    @endphp
+                    <a href="{{ $userDashboardRoute }}" title="Accéder à mon espace" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-indigo-500/15 dark:hover:bg-indigo-500/25 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-sm transition-all duration-200 hover:scale-105 shadow-sm">
                         <i class="fa-solid fa-user-gear"></i>
-                    </div>
+                    </a>
 
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf

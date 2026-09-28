@@ -36,17 +36,24 @@ class StagiaireController extends Controller
             'lieu_naissance'=> 'nullable|string|max:255',
             'telephone'     => 'nullable|string|max:20',
             'email'         => 'required|email|unique:stagiaires,email|unique:users,email',
-            'password'      => 'required|string|min:6',
-            'photo'         => 'nullable|image|max:2048',
+            'password'      => 'nullable|string|min:4',
+            'photo'         => 'nullable|image|max:4096',
             'lieu'          => 'nullable|string|max:255',
             'filiere'       => 'nullable|string|max:100',
+        ], [
+            'nom.required'      => 'Le nom est obligatoire.',
+            'prenom.required'   => 'Le prénom est obligatoire.',
+            'email.required'    => 'L\'adresse email est obligatoire.',
+            'email.unique'      => 'Cette adresse email est déjà utilisée par un autre stagiaire ou compte.',
+            'email.email'       => 'Veuillez fournir une adresse email valide.',
+            'sexe.required'     => 'Veuillez sélectionner le sexe.',
         ]);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('uploads', 'public');
         }
 
-        $plainPassword = $data['password'];
+        $plainPassword    = !empty($data['password']) ? $data['password'] : 'stagiaire123';
         $data['password'] = bcrypt($plainPassword);
 
         DB::transaction(function () use ($data, $plainPassword) {

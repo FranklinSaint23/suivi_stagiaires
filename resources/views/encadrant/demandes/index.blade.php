@@ -16,10 +16,10 @@
     </div>
 
     <!-- Table Container -->
-    <div class="glass-panel rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+    <div class="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                <thead class="bg-slate-100 dark:bg-slate-900/90 text-xs uppercase font-bold text-slate-700 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                     <tr>
                         <th class="px-4 py-3.5">Candidat</th>
                         <th class="px-4 py-3.5">Filière</th>
@@ -29,40 +29,40 @@
                         <th class="px-4 py-3.5 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-slate-800 dark:text-slate-300">
                     @forelse($demandes as $d)
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="px-4 py-3 font-semibold text-white">
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                        <td class="px-4 py-3 font-semibold text-slate-900 dark:text-white">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-indigo-400 flex items-center justify-center font-bold text-xs">
-                                    {{ strtoupper(substr($d->nom, 0, 1)) }}
+                                <div class="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-slate-800 border border-indigo-500/20 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">
+                                    {{ strtoupper(substr($d->nom ?? 'S', 0, 1)) }}
                                 </div>
                                 <div>
-                                    <div class="font-medium text-slate-100">{{ $d->prenom }} {{ $d->nom }}</div>
-                                    <div class="text-[11px] text-slate-400">{{ $d->email }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-slate-100 text-sm">{{ $d->nom }} {{ $d->prenom }}</div>
+                                    <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">{{ $d->email }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-slate-300 font-medium">{{ $d->filiere }}</td>
-                        <td class="px-4 py-3 text-slate-400">
-                            <span class="inline-flex items-center gap-1">
-                                <i class="fa-solid fa-location-dot text-slate-500 text-xs"></i> {{ $d->lieu }}
+                        <td class="px-4 py-3 text-slate-900 dark:text-slate-300 font-bold">{{ $d->filiere }}</td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">
+                            <span class="inline-flex items-center gap-1 text-slate-700 dark:text-slate-400 text-xs">
+                                <i class="fa-solid fa-location-dot text-indigo-500 text-xs"></i> {{ $d->lieu }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-xs text-slate-400 font-mono">
+                        <td class="px-4 py-3 text-xs text-slate-700 dark:text-slate-400 font-mono font-bold">
                             {{ $d->date_debut->format('d/m/Y') }} → {{ $d->date_fin->format('d/m/Y') }}
                         </td>
                         <td class="px-4 py-3 text-center">
                             @if($d->etat === 'Validée')
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
                                     <i class="fa-solid fa-circle-check text-[10px]"></i> Validée
                                 </span>
                             @elseif($d->etat === 'Refusée')
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30">
                                     <i class="fa-solid fa-circle-xmark text-[10px]"></i> Refusée
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
                                     <i class="fa-solid fa-clock text-[10px]"></i> En attente
                                 </span>
                             @endif
@@ -70,7 +70,7 @@
                         <td class="px-4 py-3 text-right">
                             <div class="inline-flex items-center gap-1.5">
                                 <a href="{{ route('encadrant.demandes.show', $d) }}"
-                                   class="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-700 transition">
+                                   class="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 transition">
                                     <i class="fa-solid fa-eye"></i> Détails
                                 </a>
                                 @if($d->etat === 'En attente')
@@ -91,7 +91,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-12 text-center text-slate-400">
+                        <td colspan="6" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
                             <i class="fa-solid fa-inbox text-4xl mb-3 opacity-30 block"></i>
                             <p class="text-sm font-medium">Aucune demande enregistrée pour le moment.</p>
                         </td>

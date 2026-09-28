@@ -101,69 +101,69 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse($stagiaires as $s)
-                <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+                <div class="glass-card p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full gradient-bg-primary flex items-center justify-center text-white font-bold text-sm">
+                            <div class="w-10 h-10 rounded-full gradient-bg-primary flex items-center justify-center text-white font-bold text-sm shadow">
                                 {{ strtoupper(substr($s->nom, 0, 1)) }}
                             </div>
                             <div>
-                                <h3 class="font-bold text-slate-100 text-sm">{{ $s->nom_complet }}</h3>
-                                <p class="text-xs text-slate-400">{{ $s->filiere }}</p>
+                                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm">{{ $s->nom_complet }}</h3>
+                                <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">{{ $s->filiere }}</p>
                             </div>
                         </div>
-                        <a href="{{ route('encadrant.stagiaires.show', $s) }}" class="text-xs text-indigo-400 hover:underline">Profil</a>
+                        <a href="{{ route('encadrant.stagiaires.show', $s) }}" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Profil</a>
                     </div>
 
                     <!-- Progression Bar -->
                     <div class="space-y-1">
                         <div class="flex justify-between text-xs font-semibold">
-                            <span class="text-slate-400">Progression Globale</span>
-                            <span class="{{ $s->progression_globale >= 75 ? 'text-emerald-400' : ($s->progression_globale >= 50 ? 'text-amber-300' : 'text-rose-400') }}">
+                            <span class="text-slate-600 dark:text-slate-400">Progression Globale</span>
+                            <span class="{{ $s->progression_globale >= 75 ? 'text-emerald-600 dark:text-emerald-400' : ($s->progression_globale >= 50 ? 'text-amber-600 dark:text-amber-300' : 'text-rose-600 dark:text-rose-400') }}">
                                 {{ $s->progression_globale }}%
                             </span>
                         </div>
-                        <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div class="w-full h-2 bg-slate-200 dark:bg-slate-900 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800">
                             <div class="h-full rounded-full transition-all duration-500 {{ $s->progression_globale >= 75 ? 'bg-emerald-500' : ($s->progression_globale >= 50 ? 'bg-amber-500' : 'bg-rose-500') }}" style="width: {{ $s->progression_globale }}%"></div>
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-center text-xs text-slate-400 pt-1 border-t border-slate-800/60">
-                        <span>Présence : <strong class="text-slate-200">{{ $s->taux_presence }}%</strong></span>
-                        <span>Obj. terminés : <strong class="text-slate-200">{{ $s->objectifs->where('statut', 'Terminé')->count() }}/{{ $s->objectifs->count() }}</strong></span>
+                    <div class="flex justify-between items-center text-xs text-slate-600 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800/60">
+                        <span>Présence : <strong class="text-slate-900 dark:text-slate-200 font-bold">{{ $s->taux_presence }}%</strong></span>
+                        <span>Obj. terminés : <strong class="text-slate-900 dark:text-slate-200 font-bold">{{ $s->objectifs->where('statut', 'Terminé')->count() }}/{{ $s->objectifs->count() }}</strong></span>
                     </div>
                 </div>
             @empty
-                <p class="col-span-full text-slate-400 text-sm text-center py-4">Aucun stagiaire inscrit.</p>
+                <p class="col-span-full text-slate-500 dark:text-slate-400 text-sm text-center py-4">Aucun stagiaire inscrit.</p>
             @endforelse
         </div>
     </div>
 
     <!-- Recent Demandes Section -->
-    <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
+    <div class="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl">
         <div class="flex items-center justify-between mb-5">
             <div>
-                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-inbox text-indigo-400"></i> Demandes de stage récentes
+                <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-inbox text-indigo-600 dark:text-indigo-400"></i> Demandes de stage récentes
                 </h2>
-                <p class="text-xs text-slate-400">Dernières postulations soumises via la plateforme</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400">Dernières postulations soumises via la plateforme</p>
             </div>
-            <a href="{{ route('encadrant.demandes.index') }}" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
+            <a href="{{ route('encadrant.demandes.index') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 transition">
                 <span>Voir tout</span>
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
 
         @if($demandes->isEmpty())
-            <div class="text-center py-8 text-slate-400">
+            <div class="text-center py-8 text-slate-500 dark:text-slate-400">
                 <i class="fa-solid fa-folder-open text-3xl mb-2 opacity-50"></i>
                 <p class="text-sm">Aucune demande enregistrée pour le moment.</p>
             </div>
         @else
             <!-- Responsive Table Container -->
-            <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800/80">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-slate-900/90 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                    <thead class="bg-slate-100 dark:bg-slate-900/90 text-xs uppercase font-bold text-slate-700 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5">Candidat</th>
                             <th class="px-4 py-3.5">Filière</th>
@@ -172,44 +172,44 @@
                             <th class="px-4 py-3.5 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-slate-800 dark:text-slate-300">
                         @foreach($demandes as $d)
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="px-4 py-3 font-semibold text-white">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                            <td class="px-4 py-3 font-semibold">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-slate-800 border border-indigo-500/20 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">
                                         {{ strtoupper(substr($d->nom, 0, 1)) }}
                                     </div>
                                     <div>
-                                        <div class="font-medium text-slate-100">{{ $d->nom }} {{ $d->prenom }}</div>
-                                        <div class="text-[11px] text-slate-400">{{ $d->email }}</div>
+                                        <div class="font-bold text-slate-900 dark:text-slate-100 text-sm">{{ $d->nom }} {{ $d->prenom }}</div>
+                                        <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">{{ $d->email }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 text-slate-300">{{ $d->filiere }}</td>
-                            <td class="px-4 py-3 text-slate-300">
-                                <span class="inline-flex items-center gap-1 text-slate-400 text-xs">
-                                    <i class="fa-solid fa-location-dot text-slate-500"></i> {{ $d->lieu }}
+                            <td class="px-4 py-3 text-slate-900 dark:text-slate-300 font-bold">{{ $d->filiere }}</td>
+                            <td class="px-4 py-3 text-slate-700 dark:text-slate-300">
+                                <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 text-xs">
+                                    <i class="fa-solid fa-location-dot text-slate-400"></i> {{ $d->lieu }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-center">
                                 @if($d->etat === 'Validée')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
                                         <i class="fa-solid fa-circle-check text-[10px]"></i> Validée
                                     </span>
                                 @elseif($d->etat === 'Refusée')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30">
                                         <i class="fa-solid fa-circle-xmark text-[10px]"></i> Refusée
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
                                         <i class="fa-solid fa-clock text-[10px]"></i> En attente
                                     </span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <a href="{{ route('encadrant.demandes.show', $d) }}"
-                                   class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700 transition">
+                                   class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-300 dark:border-slate-700 transition">
                                     <i class="fa-solid fa-eye"></i> Voir
                                 </a>
                             </td>

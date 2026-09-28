@@ -147,10 +147,10 @@
                         <!-- Glowing backdrop aura -->
                         <div class="absolute -inset-2 gradient-bg-primary rounded-3xl blur-2xl opacity-20 dark:opacity-30"></div>
                         
-                        <!-- Main Hero Image (Young African Interns Collaborating on Laptop) -->
+                        <!-- Main Hero Image (African Interns Collaborating on Laptop) -->
                         <div class="relative rounded-3xl overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl group">
-                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" 
-                                 alt="Stagiaires travaillant en équipe" 
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80" 
+                                 alt="Stagiaires africains travaillant en équipe" 
                                  class="w-full h-[360px] sm:h-[440px] object-cover transform group-hover:scale-105 transition duration-700">
                             
                             <!-- Dark Gradient overlay at bottom -->
