@@ -64,7 +64,7 @@
             <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-2">
                 Demande de <span class="gradient-text">Stage</span>
             </h1>
-            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 font-medium">Remplissez le formulaire ci-dessous pour soumettre votre candidature académique</p>
+            <p class="text-sm text-slate-400 dark:text-slate-100 mt-1 font-medium">Remplissez le formulaire ci-dessous pour soumettre votre candidature académique</p>
         </div>
 
         <!-- Glassmorphism Form Card -->

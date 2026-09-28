@@ -65,7 +65,7 @@
             <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-1">
                 Stage<span class="gradient-text">Track</span>
             </h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide mt-1 uppercase">Espace d'authentification sécurisé</p>
+            <p class="text-xs text-slate-400 dark:text-slate-100 font-medium tracking-wide mt-1 uppercase">Espace d'authentification sécurisé</p>
         </div>
 
         <!-- Glassmorphism Auth Card -->
