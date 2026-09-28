@@ -63,10 +63,8 @@
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-600 dark:text-slate-300">
                 <a href="{{ url('/') }}" class="px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold">Accueil</a>
-                <a href="#about" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">À propos</a>
                 <a href="#features" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Fonctionnalités</a>
                 <a href="#impact" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Tarifs</a>
-                <a href="#footer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Contact</a>
             </nav>
 
             <!-- Actions Right (Dark Mode Toggle & Login) -->
