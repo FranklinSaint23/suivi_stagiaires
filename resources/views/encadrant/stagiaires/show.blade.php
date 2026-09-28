@@ -27,31 +27,31 @@
     <!-- Details Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Personal Info -->
-        <div class="glass-panel p-6 rounded-2xl space-y-4">
-            <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-700/60 pb-3">
-                <i class="fa-solid fa-user-gear text-indigo-400"></i> Informations Personnelles
+        <div class="bg-white dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-700/60 pb-3">
+                <i class="fa-solid fa-user-gear text-indigo-600 dark:text-indigo-400"></i> Informations Personnelles
             </h2>
             <dl class="space-y-3 text-sm">
-                <div class="flex justify-between py-1 border-b border-slate-800/60">
-                    <dt class="text-slate-400 font-medium">Sexe</dt>
-                    <dd class="text-slate-200 font-semibold">{{ $stagiaire->sexe }}</dd>
+                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
+                    <dt class="text-slate-600 dark:text-slate-400 font-semibold">Sexe</dt>
+                    <dd class="text-slate-900 dark:text-slate-100 font-bold">{{ $stagiaire->sexe }}</dd>
                 </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/60">
-                    <dt class="text-slate-400 font-medium">Date de Naissance</dt>
-                    <dd class="text-slate-200 font-semibold">{{ $stagiaire->naissance?->format('d/m/Y') ?? '-' }}</dd>
+                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
+                    <dt class="text-slate-600 dark:text-slate-400 font-semibold">Date de Naissance</dt>
+                    <dd class="text-slate-900 dark:text-slate-100 font-bold">{{ $stagiaire->naissance?->format('d/m/Y') ?? '-' }}</dd>
                 </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/60">
-                    <dt class="text-slate-400 font-medium">Lieu de Naissance</dt>
-                    <dd class="text-slate-200 font-semibold">{{ $stagiaire->lieu_naissance ?? '-' }}</dd>
+                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
+                    <dt class="text-slate-600 dark:text-slate-400 font-semibold">Lieu de Naissance</dt>
+                    <dd class="text-slate-900 dark:text-slate-100 font-bold">{{ $stagiaire->lieu_naissance ?? '-' }}</dd>
                 </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/60">
-                    <dt class="text-slate-400 font-medium">Téléphone</dt>
-                    <dd class="text-slate-200 font-semibold">{{ $stagiaire->telephone }}</dd>
+                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
+                    <dt class="text-slate-600 dark:text-slate-400 font-semibold">Téléphone</dt>
+                    <dd class="text-slate-900 dark:text-slate-100 font-bold">{{ $stagiaire->telephone }}</dd>
                 </div>
                 <div class="flex justify-between py-1">
-                    <dt class="text-slate-400 font-medium">Taux de Présence</dt>
+                    <dt class="text-slate-600 dark:text-slate-400 font-semibold">Taux de Présence</dt>
                     <dd>
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $stagiaire->taux_presence >= 75 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30' }}">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $stagiaire->taux_presence >= 75 ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30' }}">
                             {{ $stagiaire->taux_presence }}%
                         </span>
                     </dd>

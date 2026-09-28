@@ -127,16 +127,22 @@ html.dark main {
 }
 
 html.dark .glass-panel {
-    background-color: rgba(15, 23, 42, 0.85) !important;
+    background-color: rgba(15, 23, 42, 0.92) !important;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
     color: #f8fafc !important;
 }
 
+html.dark [class*="bg-white"] {
+    background-color: rgba(15, 23, 42, 0.92) !important;
+    color: #f8fafc !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 html.dark .glass-card {
-    background-color: rgba(15, 23, 42, 0.75) !important;
+    background-color: rgba(15, 23, 42, 0.8) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -206,6 +212,39 @@ html.dark h3 span:not(.gradient-text) {
 html.dark p,
 html.dark label {
     color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-950,
+html.dark .text-slate-800,
+html.dark .text-black {
+    color: #ffffff !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+    color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-400,
+html.dark .text-slate-300,
+html.dark .text-slate-200,
+html.dark .text-slate-100 {
+    color: #f8fafc !important;
+}
+
+html.dark aside a:not(.bg-indigo-600) {
+    color: #cbd5e1 !important;
+}
+
+html.dark aside a:not(.bg-indigo-600):hover {
+    color: #ffffff !important;
+    background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+html.dark aside p {
+    color: #94a3b8 !important;
 }
 
 html.dark .bg-slate-100,

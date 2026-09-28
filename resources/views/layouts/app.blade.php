@@ -54,9 +54,7 @@
                     <div class="w-10 h-10 rounded-xl gradient-bg-primary flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
                         <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
                     </div>
-                    <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
-                        Stage<span class="gradient-text">Track</span>
-                    </span>
+                    <span class="gradient-text font-black text-xl sm:text-2xl tracking-tight">StageTrack</span>
                 </a>
             </div>
 
@@ -72,8 +70,8 @@
 
                 @auth
                     <div class="hidden sm:flex flex-col items-end text-right">
-                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ auth()->user()->nom ?? '' }}</span>
-                        <span class="text-[10px] font-bold tracking-wider uppercase bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full">
+                        <span class="text-sm font-extrabold text-slate-900 dark:text-white">{{ auth()->user()->nom ?? auth()->user()->name ?? 'Utilisateur' }}</span>
+                        <span class="text-[10px] font-extrabold tracking-wider uppercase bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full">
                             {{ auth()->user()->role ?? '' }}
                         </span>
                     </div>

@@ -68,7 +68,7 @@
         </div>
 
         <!-- Glassmorphism Recovery Card -->
-        <div class="bg-white/90 dark:bg-slate-900/85 backdrop-blur-xl rounded-3xl p-7 sm:p-9 shadow-2xl border border-slate-200 dark:border-slate-700/80 relative overflow-hidden">
+        <div class="glass-panel backdrop-blur-xl rounded-3xl p-7 sm:p-9 shadow-2xl border border-slate-200 dark:border-slate-700/80 relative overflow-hidden">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
                     <i class="fa-solid fa-key text-amber-500 dark:text-amber-400"></i> Mot de passe oublié

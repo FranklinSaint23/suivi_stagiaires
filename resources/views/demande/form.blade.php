@@ -68,7 +68,7 @@
         </div>
 
         <!-- Glassmorphism Form Card -->
-        <div class="bg-white/90 dark:bg-slate-900/85 backdrop-blur-xl rounded-3xl p-6 sm:p-9 border border-slate-200 dark:border-slate-700/80 shadow-2xl space-y-6">
+        <div class="glass-panel backdrop-blur-xl rounded-3xl p-6 sm:p-9 border border-slate-200 dark:border-slate-700/80 shadow-2xl space-y-6">
             @if(session('success'))
                 <div class="p-4 bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 rounded-2xl text-sm flex items-center gap-3">
                     <i class="fa-solid fa-circle-check text-xl shrink-0"></i>

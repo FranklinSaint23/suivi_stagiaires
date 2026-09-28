@@ -178,10 +178,10 @@
                             <td class="px-4 py-3 font-semibold">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-slate-800 border border-indigo-500/20 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">
-                                        {{ strtoupper(substr($d->nom, 0, 1)) }}
+                                        {{ strtoupper(substr($d->nom ?? $d->email ?? 'S', 0, 1)) }}
                                     </div>
                                     <div>
-                                        <div class="font-bold text-slate-900 dark:text-slate-100 text-sm">{{ $d->nom }} {{ $d->prenom }}</div>
+                                        <div class="font-bold text-slate-900 dark:text-white text-sm">{{ $d->prenom ?? '' }} {{ $d->nom ?? '' }}</div>
                                         <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">{{ $d->email }}</div>
                                     </div>
                                 </div>

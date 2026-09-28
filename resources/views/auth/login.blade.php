@@ -69,7 +69,7 @@
         </div>
 
         <!-- Glassmorphism Auth Card -->
-        <div class="bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-7 sm:p-9 shadow-2xl border border-slate-200 dark:border-slate-700/80 relative overflow-hidden group">
+        <div class="glass-panel backdrop-blur-xl rounded-3xl p-7 sm:p-9 shadow-2xl border border-slate-200 dark:border-slate-700/80 relative overflow-hidden group">
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition duration-500"></div>
 
             <div class="flex items-center justify-between mb-6">
