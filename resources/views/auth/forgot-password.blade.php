@@ -43,9 +43,9 @@
     </div>
 
     <!-- Floating Theme Switcher Button -->
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[9999]">
         <button onclick="toggleTheme()" type="button" title="Changer le mode sombre/clair" 
-                class="p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 transition-all duration-200 hover:scale-110 shadow-lg flex items-center justify-center">
+                class="p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700/80 transition-all duration-200 hover:scale-110 shadow-lg flex items-center justify-center">
             <i class="fa-solid fa-sun text-amber-400 text-base hidden dark:inline"></i>
             <i class="fa-solid fa-moon text-indigo-600 text-base dark:hidden"></i>
         </button>
@@ -71,11 +71,19 @@
         <div class="glass-panel backdrop-blur-xl rounded-3xl p-7 sm:p-9 shadow-2xl border border-slate-200 dark:border-slate-700/80 relative overflow-hidden">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                    <i class="fa-solid fa-key text-amber-500 dark:text-amber-400"></i> Mot de passe oublié
+                    <i class="fa-solid fa-key text-amber-500 dark:text-amber-400"></i> Mot de passe
                 </h2>
-                <a href="{{ route('login') }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-left"></i> Connexion
-                </a>
+                <div class="flex items-center gap-2 z-20 relative">
+                    <button onclick="toggleTheme()" type="button" title="Changer le mode sombre/clair" 
+                            class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 transition-all duration-200 active:scale-95 flex items-center justify-center" aria-label="Changer le thème">
+                        <i class="fa-solid fa-sun text-amber-400 text-sm hidden dark:inline"></i>
+                        <i class="fa-solid fa-moon text-indigo-600 text-sm dark:hidden"></i>
+                    </button>
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 px-3 py-1.5 rounded-xl transition font-semibold cursor-pointer active:scale-95 shadow-sm z-20 relative">
+                        <i class="fa-solid fa-house text-xs"></i>
+                        <span>Accueil</span>
+                    </a>
+                </div>
             </div>
 
             @if(session('success'))

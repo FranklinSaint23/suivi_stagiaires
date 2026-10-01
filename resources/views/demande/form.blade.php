@@ -43,9 +43,9 @@
     </div>
 
     <!-- Floating Theme Switcher Button -->
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[9999]">
         <button onclick="toggleTheme()" type="button" title="Changer le mode sombre/clair" 
-                class="p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 transition-all duration-200 hover:scale-110 shadow-lg flex items-center justify-center">
+                class="p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700/80 transition-all duration-200 hover:scale-110 shadow-lg flex items-center justify-center">
             <i class="fa-solid fa-sun text-amber-400 text-base hidden dark:inline"></i>
             <i class="fa-solid fa-moon text-indigo-600 text-base dark:hidden"></i>
         </button>
@@ -57,7 +57,13 @@
 
     <div class="max-w-3xl mx-auto relative z-10 animate-fade-in">
         <!-- Header -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 relative">
+            <div class="absolute right-0 top-0 hidden sm:flex items-center gap-2 z-20">
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/80 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 px-3 py-1.5 rounded-xl transition font-semibold cursor-pointer active:scale-95 shadow-sm">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Accueil</span>
+                </a>
+            </div>
             <a href="{{ url('/') }}" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-bg-primary shadow-xl shadow-indigo-500/30 mb-4 transform hover:scale-110 hover:rotate-3 transition duration-300">
                 <i class="fa-solid fa-file-pen text-3xl text-white"></i>
             </a>
