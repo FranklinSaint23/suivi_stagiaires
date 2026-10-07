@@ -20,29 +20,16 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       - key: DB_CONNECTION
-        value: pgsql
+        value: mysql
       - key: DB_HOST
-        fromDatabase:
-          name: suivi-stagiaires-db
-          property: host
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name: suivi-stagiaires-db
-          property: port
+        value: "4000"
       - key: DB_DATABASE
-        fromDatabase:
-          name: suivi-stagiaires-db
-          property: database
+        sync: false
       - key: DB_USERNAME
-        fromDatabase:
-          name: suivi-stagiaires-db
-          property: user
+        sync: false
       - key: DB_PASSWORD
-        fromDatabase:
-          name: suivi-stagiaires-db
-          property: password
-
-databases:
-  - name: suivi-stagiaires-db
-    plan: free
-    databaseName: suivi_stagiaires
+        sync: false
+      - key: MYSQL_ATTR_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt

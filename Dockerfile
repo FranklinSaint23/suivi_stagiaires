@@ -2,7 +2,7 @@ FROM php:8.4-cli
 
 # Dépendances système + libs pour extensions PHP
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip \
+    git curl zip unzip ca-certificates \
     libpng-dev libonig-dev libxml2-dev \
     libpq-dev libzip-dev \
     libfreetype6-dev libjpeg62-turbo-dev \
