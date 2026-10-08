@@ -11,6 +11,7 @@ class Stagiaire extends Authenticatable
     use HasFactory;
 
     protected $fillable = [
+        'encadrant_id',
         'sexe', 'nom', 'prenom', 'naissance', 'lieu_naissance',
         'telephone', 'email', 'password', 'photo', 'lieu', 'filiere',
         'latitude', 'longitude',
@@ -26,7 +27,13 @@ class Stagiaire extends Authenticatable
         ];
     }
 
+    public function encadrant()
+    {
+        return $this->belongsTo(User::class, 'encadrant_id');
+    }
+
     public function stages()
+
     {
         return $this->hasMany(Stage::class);
     }

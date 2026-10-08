@@ -13,7 +13,7 @@ class PresenceController extends Controller
         $mois  = $request->integer('mois', now()->month);
         $annee = $request->integer('annee', now()->year);
 
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
 
         $presencesMap = [];
         foreach ($stagiaires as $s) {
@@ -34,7 +34,7 @@ class PresenceController extends Controller
 
     public function create()
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         return view('encadrant.presences.create', compact('stagiaires'));
     }
 
@@ -45,6 +45,8 @@ class PresenceController extends Controller
             'date'         => 'required|date',
             'present'      => 'required|boolean',
         ]);
+
+        $stagiaire = Stagiaire::where('encadrant_id', auth()->id())->findOrFail($data['stagiaire_id']);
 
         $data['statut'] = $data['present'] ? 'Présent' : 'Absent';
 

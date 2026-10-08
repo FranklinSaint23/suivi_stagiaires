@@ -35,6 +35,7 @@ class EncadrantManagerController extends Controller
         $data = $request->validate([
             'nom'       => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email',
+            'telephone' => 'nullable|string|max:30',
             'matricule' => 'nullable|string|max:50|unique:users,matricule',
             'password'  => 'required|string|min:6',
         ]);
@@ -43,13 +44,20 @@ class EncadrantManagerController extends Controller
             $data['matricule'] = 'ENC' . date('Y') . str_pad(User::where('role', 'encadrant')->count() + 1, 4, '0', STR_PAD_LEFT);
         }
 
-        $data['password'] = Hash::make($data['password']);
+        $plainPassword    = $data['password'];
+        $data['password'] = Hash::make($plainPassword);
         $data['role']     = 'encadrant';
 
-        User::create($data);
+        $encadrant = User::create($data);
+
+        $waLink = !empty($encadrant->telephone)
+            ? \App\Helpers\WhatsAppHelper::encadrantCredentialsLink($encadrant->telephone, $encadrant->nom, $encadrant->matricule, $encadrant->email, $plainPassword)
+            : null;
 
         return redirect()->route('admin.encadrants.index')
-            ->with('success', 'Encadrant créé avec succès.');
+            ->with('success', "Encadrant {$encadrant->nom} créé avec succès (Matricule: {$encadrant->matricule}).")
+            ->with('whatsapp_link', $waLink)
+            ->with('encadrant_nom', $encadrant->nom);
     }
 
     public function edit(User $encadrant)
@@ -65,6 +73,7 @@ class EncadrantManagerController extends Controller
         $data = $request->validate([
             'nom'       => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email,' . $encadrant->id,
+            'telephone' => 'nullable|string|max:30',
             'matricule' => 'required|string|max:50|unique:users,matricule,' . $encadrant->id,
             'password'  => 'nullable|string|min:6',
         ]);
@@ -96,9 +105,15 @@ class EncadrantManagerController extends Controller
         $tempPassword = Str::random(8);
         $encadrant->update(['password' => Hash::make($tempPassword)]);
 
+        $waLink = !empty($encadrant->telephone)
+            ? \App\Helpers\WhatsAppHelper::messageLink($encadrant->telephone, "Bonjour {$encadrant->nom}, votre mot de passe Encadrant StageTrack a été réinitialisé.\nMatricule : {$encadrant->matricule}\nEmail : {$encadrant->email}\nNouveau mot de passe : {$tempPassword}\nLien de connexion : " . url('/login'))
+            : null;
+
         return back()->with([
             'reset_user'    => $encadrant->nom . ' (' . $encadrant->matricule . ')',
             'temp_password' => $tempPassword,
+            'whatsapp_link' => $waLink,
         ]);
     }
+
 }

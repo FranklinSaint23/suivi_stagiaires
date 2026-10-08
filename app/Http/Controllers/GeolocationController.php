@@ -9,16 +9,26 @@ class GeolocationController extends Controller
 {
     public function index(Request $request)
     {
-        $search     = $request->input('q');
+        $search      = $request->input('q');
+        $encadrantId = auth()->id();
+        $isEncadrant = auth()->check() && auth()->user()->role === 'encadrant';
+
         $stagiaires = Stagiaire::whereNotNull('latitude')
             ->whereNotNull('longitude')
+            ->when($isEncadrant, function ($q) use ($encadrantId) {
+                $q->where('encadrant_id', $encadrantId);
+            })
             ->when($search, function ($q) use ($search) {
                 $q->where('nom', 'like', "%$search%")
                   ->orWhere('prenom', 'like', "%$search%");
             })
             ->get();
 
-        $tous = Stagiaire::orderBy('nom')->get();
+        $tous = Stagiaire::when($isEncadrant, function ($q) use ($encadrantId) {
+                $q->where('encadrant_id', $encadrantId);
+            })
+            ->orderBy('nom')
+            ->get();
 
         return view('geolocation.carte', compact('stagiaires', 'tous', 'search'));
     }

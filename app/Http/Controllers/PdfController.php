@@ -11,6 +11,8 @@ class PdfController extends Controller
 {
     public function attestation(Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
+
         $pdf = Pdf::loadView('pdf.attestation', compact('stagiaire'))
             ->setPaper('a4', 'portrait');
 
@@ -19,6 +21,8 @@ class PdfController extends Controller
 
     public function carte(Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
+
         $photoBase64 = null;
         if ($stagiaire->photo) {
             $cleanPath = ltrim(str_replace('storage/', '', $stagiaire->photo), '/');
@@ -51,7 +55,7 @@ class PdfController extends Controller
         $mois  = $request->integer('mois', now()->month);
         $annee = $request->integer('annee', now()->year);
 
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         $nbJours    = \Carbon\Carbon::createFromDate($annee, $mois, 1)->daysInMonth;
 
         $presencesMap = [];
@@ -76,13 +80,13 @@ class PdfController extends Controller
 
     public function choixAttestation()
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         return view('encadrant.pdf.choix_attestation', compact('stagiaires'));
     }
 
     public function choixCarte()
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         return view('encadrant.pdf.choix_carte', compact('stagiaires'));
     }
 }

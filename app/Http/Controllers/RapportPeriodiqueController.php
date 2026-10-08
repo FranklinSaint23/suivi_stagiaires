@@ -16,7 +16,10 @@ class RapportPeriodiqueController extends Controller
     // --- Encadrant Side ---
     public function indexEncadrant(Request $request)
     {
-        $query = RapportPeriodique::with('stagiaire');
+        $encadrantId = auth()->id();
+        $query = RapportPeriodique::whereHas('stagiaire', function ($q) use ($encadrantId) {
+            $q->where('encadrant_id', $encadrantId);
+        })->with('stagiaire');
 
         if ($request->filled('statut')) {
             $query->where('statut', $request->statut);
@@ -25,20 +28,23 @@ class RapportPeriodiqueController extends Controller
             $query->where('stagiaire_id', $request->stagiaire_id);
         }
 
-        $rapports = $query->latest()->get();
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $rapports   = $query->latest()->get();
+        $stagiaires = Stagiaire::where('encadrant_id', $encadrantId)->orderBy('nom')->get();
 
         return view('encadrant.rapports.index', compact('rapports', 'stagiaires'));
     }
 
     public function showEncadrant(RapportPeriodique $rapport)
     {
+        abort_if($rapport->stagiaire && $rapport->stagiaire->encadrant_id && $rapport->stagiaire->encadrant_id !== auth()->id(), 403);
         $rapport->load(['stagiaire.objectifs', 'stage']);
         return view('encadrant.rapports.show', compact('rapport'));
     }
 
     public function validerEncadrant(Request $request, RapportPeriodique $rapport)
     {
+        abort_if($rapport->stagiaire && $rapport->stagiaire->encadrant_id && $rapport->stagiaire->encadrant_id !== auth()->id(), 403);
+
         $data = $request->validate([
             'statut'                => 'required|in:Validé,Correction demandée',
             'commentaire_encadrant' => 'nullable|string',
@@ -71,6 +77,8 @@ class RapportPeriodiqueController extends Controller
 
     public function analyserIa(RapportPeriodique $rapport)
     {
+        abort_if($rapport->stagiaire && $rapport->stagiaire->encadrant_id && $rapport->stagiaire->encadrant_id !== auth()->id(), 403);
+
         try {
             $result = $this->groq->analyseRapport(
                 $rapport->contenu,
@@ -162,16 +170,26 @@ class RapportPeriodiqueController extends Controller
 
         $rapport = RapportPeriodique::create($data);
 
-        // Notify Encadrants
-        $encadrants = User::where('role', 'encadrant')->get();
-        foreach ($encadrants as $enc) {
+        // Notify assigned Encadrant (or all if unassigned)
+        if ($stagiaire->encadrant_id) {
             AppNotification::create([
-                'user_id' => $enc->id,
+                'user_id' => $stagiaire->encadrant_id,
                 'titre'   => 'Nouveau rapport soumis',
                 'message' => "Le stagiaire {$stagiaire->nom_complet} a soumis son rapport {$data['periode']} : {$rapport->titre}",
                 'type'    => 'info',
                 'lien'    => route('encadrant.rapports.show', $rapport),
             ]);
+        } else {
+            $encadrants = User::where('role', 'encadrant')->get();
+            foreach ($encadrants as $enc) {
+                AppNotification::create([
+                    'user_id' => $enc->id,
+                    'titre'   => 'Nouveau rapport soumis',
+                    'message' => "Le stagiaire {$stagiaire->nom_complet} a soumis son rapport {$data['periode']} : {$rapport->titre}",
+                    'type'    => 'info',
+                    'lien'    => route('encadrant.rapports.show', $rapport),
+                ]);
+            }
         }
 
         return redirect()->route('stagiaire.rapports.index')

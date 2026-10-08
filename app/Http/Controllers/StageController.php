@@ -11,7 +11,10 @@ class StageController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Stage::with('stagiaire');
+        $encadrantId = auth()->id();
+        $query = Stage::whereHas('stagiaire', function ($q) use ($encadrantId) {
+            $q->where('encadrant_id', $encadrantId);
+        })->with('stagiaire');
 
         if ($request->filled('theme')) {
             $query->where('theme', 'like', '%' . $request->theme . '%');
@@ -25,14 +28,14 @@ class StageController extends Controller
         }
 
         $stages     = $query->latest()->get();
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', $encadrantId)->orderBy('nom')->get();
 
         return view('encadrant.stages.index', compact('stages', 'stagiaires'));
     }
 
     public function create()
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         return view('encadrant.stages.create', compact('stagiaires'));
     }
 
@@ -47,6 +50,8 @@ class StageController extends Controller
             'rapport'       => 'nullable|file|mimes:pdf|max:5120',
             'convention'    => 'nullable|file|mimes:pdf|max:5120',
         ]);
+
+        $stagiaire = Stagiaire::where('encadrant_id', auth()->id())->findOrFail($data['stagiaire_id']);
 
         if ($request->hasFile('rapport')) {
             $data['rapport'] = $request->file('rapport')->store('uploads', 'public');
@@ -63,12 +68,15 @@ class StageController extends Controller
 
     public function edit(Stage $stage)
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
+        abort_if($stage->stagiaire && $stage->stagiaire->encadrant_id && $stage->stagiaire->encadrant_id !== auth()->id(), 403);
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())->orderBy('nom')->get();
         return view('encadrant.stages.edit', compact('stage', 'stagiaires'));
     }
 
     public function update(Request $request, Stage $stage)
     {
+        abort_if($stage->stagiaire && $stage->stagiaire->encadrant_id && $stage->stagiaire->encadrant_id !== auth()->id(), 403);
+
         $data = $request->validate([
             'stagiaire_id'  => 'required|exists:stagiaires,id',
             'date_debut'    => 'required|date',
@@ -78,6 +86,8 @@ class StageController extends Controller
             'rapport'       => 'nullable|file|mimes:pdf|max:5120',
             'convention'    => 'nullable|file|mimes:pdf|max:5120',
         ]);
+
+        $stagiaire = Stagiaire::where('encadrant_id', auth()->id())->findOrFail($data['stagiaire_id']);
 
         if ($request->hasFile('rapport')) {
             if ($stage->rapport) Storage::disk('public')->delete($stage->rapport);
@@ -96,6 +106,8 @@ class StageController extends Controller
 
     public function destroy(Stage $stage)
     {
+        abort_if($stage->stagiaire && $stage->stagiaire->encadrant_id && $stage->stagiaire->encadrant_id !== auth()->id(), 403);
+
         if ($stage->rapport) Storage::disk('public')->delete($stage->rapport);
         if ($stage->convention) Storage::disk('public')->delete($stage->convention);
         $stage->delete();

@@ -11,10 +11,29 @@ class EncadrantController extends Controller
 {
     public function dashboard()
     {
-        $demandes           = DemandeStage::latest()->get();
-        $stagiaires         = Stagiaire::with(['presences', 'objectifs', 'rapports'])->orderBy('nom')->get();
-        $rapportsEnAttente  = RapportPeriodique::where('statut', 'Soumis')->with('stagiaire')->latest()->get();
-        $objectifsEnRetard  = Objectif::where('statut', '!=', 'Terminé')->where('date_limite', '<', now())->with('stagiaire')->get();
+        $encadrantId = auth()->id();
+
+        $demandes = DemandeStage::where(function ($q) use ($encadrantId) {
+            $q->where('etat', 'En attente')
+              ->orWhere('encadrant_id', $encadrantId);
+        })->latest()->get();
+
+        $stagiaires = Stagiaire::where('encadrant_id', $encadrantId)
+            ->with(['presences', 'objectifs', 'rapports'])
+            ->orderBy('nom')
+            ->get();
+
+        $rapportsEnAttente = RapportPeriodique::where('statut', 'Soumis')
+            ->whereHas('stagiaire', fn($q) => $q->where('encadrant_id', $encadrantId))
+            ->with('stagiaire')
+            ->latest()
+            ->get();
+
+        $objectifsEnRetard = Objectif::where('statut', '!=', 'Terminé')
+            ->where('date_limite', '<', now())
+            ->whereHas('stagiaire', fn($q) => $q->where('encadrant_id', $encadrantId))
+            ->with('stagiaire')
+            ->get();
 
         // Stagiaires needing intervention (progression < 60%, presence < 75%, or pending reports)
         $stagiairesIntervention = $stagiaires->filter(function ($s) {

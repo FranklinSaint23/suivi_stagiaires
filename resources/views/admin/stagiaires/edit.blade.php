@@ -83,6 +83,18 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-semibold text-slate-200 mb-2">Encadrant assigné</label>
+                    <select name="encadrant_id" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                        <option value="">-- Aucun (Non assigné) --</option>
+                        @foreach($encadrants as $enc)
+                            <option value="{{ $enc->id }}" {{ old('encadrant_id', $stagiaire->encadrant_id) == $enc->id ? 'selected' : '' }}>
+                                {{ $enc->nom }} ({{ $enc->matricule }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
                     <label class="block text-sm font-semibold text-slate-200 mb-2">Date de naissance</label>
                     <input type="date" name="naissance" value="{{ old('naissance', $stagiaire->naissance ? \Carbon\Carbon::parse($stagiaire->naissance)->format('Y-m-d') : '') }}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
                 </div>

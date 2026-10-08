@@ -16,7 +16,7 @@ class StagiaireManagerController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $stagiaires = Stagiaire::when($search, function ($q) use ($search) {
+        $stagiaires = Stagiaire::with('encadrant')->when($search, function ($q) use ($search) {
             $q->where('nom', 'like', "%{$search}%")
               ->orWhere('prenom', 'like', "%{$search}%")
               ->orWhere('email', 'like', "%{$search}%")
@@ -28,7 +28,8 @@ class StagiaireManagerController extends Controller
 
     public function create()
     {
-        return view('admin.stagiaires.create');
+        $encadrants = User::where('role', 'encadrant')->orderBy('nom')->get();
+        return view('admin.stagiaires.create', compact('encadrants'));
     }
 
     public function store(Request $request)
@@ -41,6 +42,7 @@ class StagiaireManagerController extends Controller
             'lieu_naissance'=> 'nullable|string|max:255',
             'telephone'     => 'nullable|string|max:20',
             'email'         => 'required|email|unique:stagiaires,email|unique:users,email',
+            'encadrant_id'  => 'nullable|exists:users,id',
             'password'      => 'required|string|min:6',
             'photo'         => 'nullable|image|max:2048',
             'lieu'          => 'nullable|string|max:255',
@@ -75,7 +77,8 @@ class StagiaireManagerController extends Controller
 
     public function edit(Stagiaire $stagiaire)
     {
-        return view('admin.stagiaires.edit', compact('stagiaire'));
+        $encadrants = User::where('role', 'encadrant')->orderBy('nom')->get();
+        return view('admin.stagiaires.edit', compact('stagiaire', 'encadrants'));
     }
 
     public function update(Request $request, Stagiaire $stagiaire)
@@ -88,6 +91,7 @@ class StagiaireManagerController extends Controller
             'lieu_naissance'=> 'nullable|string|max:255',
             'telephone'     => 'nullable|string|max:20',
             'email'         => 'required|email|unique:stagiaires,email,' . $stagiaire->id,
+            'encadrant_id'  => 'nullable|exists:users,id',
             'password'      => 'nullable|string|min:6',
             'photo'         => 'nullable|image|max:2048',
             'lieu'          => 'nullable|string|max:255',

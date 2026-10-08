@@ -61,6 +61,10 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', (function () {
+                    $host = env('DB_HOST', '127.0.0.1');
+                    if (in_array($host, ['127.0.0.1', 'localhost'])) {
+                        return null;
+                    }
                     $candidates = [
                         base_path('database/certs/ca.pem'),
                         '/etc/ssl/certs/ca-certificates.crt',

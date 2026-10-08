@@ -59,6 +59,12 @@
             </div>
 
             <div>
+                <label class="block text-sm font-semibold text-slate-200 mb-2">Numéro de Téléphone / WhatsApp</label>
+                <input type="text" name="telephone" value="{{ old('telephone', $encadrant->telephone) }}" placeholder="Ex: 692739565 ou +237 6..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                <p class="text-[11px] text-slate-400 mt-1">Utilisé pour l'envoi des identifiants et alertes par WhatsApp.</p>
+            </div>
+
+            <div>
                 <label class="block text-sm font-semibold text-slate-200 mb-2">Matricule</label>
                 <input type="text" value="{{ $encadrant->matricule }}" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-400 text-sm font-mono cursor-not-allowed">
                 <p class="text-xs text-slate-500 mt-1">Le matricule ne peut pas être modifié après la création.</p>

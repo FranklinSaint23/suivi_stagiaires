@@ -57,9 +57,16 @@
             </div>
 
             <div>
+                <label class="block text-sm font-semibold text-slate-200 mb-2">Numéro de Téléphone / WhatsApp</label>
+                <input type="text" name="telephone" placeholder="Ex: 692739565 ou +237 6..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+                <p class="text-[11px] text-slate-400 mt-1">Permet d'envoyer instantanément ses identifiants de connexion via WhatsApp.</p>
+            </div>
+
+            <div>
                 <label class="block text-sm font-semibold text-slate-200 mb-2">Matricule (Optionnel - généré automatiquement si vide)</label>
                 <input type="text" name="matricule" placeholder="Ex: ENC20260001" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 font-mono">
             </div>
+
 
             <div>
                 <label class="block text-sm font-semibold text-slate-200 mb-2">Mot de passe de connexion *</label>

@@ -12,10 +12,17 @@ class DemandeStage extends Model
     protected $table = 'demandes_stage';
 
     protected $fillable = [
+        'encadrant_id',
         'nom', 'prenom', 'email', 'sexe', 'photo', 'lieu', 'filiere',
         'telephone', 'date_debut', 'date_fin', 'cv', 'lettre', 'certificat',
         'etat', 'mot_de_passe',
     ];
+
+    public function encadrant()
+    {
+        return $this->belongsTo(User::class, 'encadrant_id');
+    }
+
 
     protected function casts(): array
     {

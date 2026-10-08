@@ -57,13 +57,8 @@
                     <i class="fa-solid fa-paper-plane"></i> Répondre
                 </button>
                 @if($msg->stagiaire?->telephone)
-                    @php
-                        $phone = preg_replace('/\s+/', '', $msg->stagiaire->telephone);
-                        if (str_starts_with($phone, '0')) $phone = '237' . substr($phone, 1);
-                        elseif (!str_starts_with($phone, '237')) $phone = '237' . $phone;
-                    @endphp
-                    <a href="https://wa.me/{{ $phone }}?text={{ urlencode('Bonjour ' . $msg->stagiaire->prenom . ', vous avez reçu une réponse à votre message.') }}"
-                       target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition">
+                    <a href="{{ \App\Helpers\WhatsAppHelper::messageLink($msg->stagiaire->telephone, 'Bonjour ' . $msg->stagiaire->prenom . ', vous avez reçu une réponse à votre message sur StageTrack.') }}"
+                       target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md shadow-emerald-600/20 transition">
                         <i class="fa-brands fa-whatsapp text-sm"></i> Contacter via WhatsApp
                     </a>
                 @endif

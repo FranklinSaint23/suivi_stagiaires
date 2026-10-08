@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Models;
 namespace App\Http\Controllers;
 
 use App\Models\Objectif;
@@ -12,8 +11,11 @@ class ObjectifController extends Controller
 {
     public function index(Request $request)
     {
-        $stagiaires = Stagiaire::orderBy('nom')->get();
-        $query = Objectif::with(['stagiaire', 'stage']);
+        $encadrantId = auth()->id();
+        $stagiaires = Stagiaire::where('encadrant_id', $encadrantId)->orderBy('nom')->get();
+        $query = Objectif::whereHas('stagiaire', function ($q) use ($encadrantId) {
+            $q->where('encadrant_id', $encadrantId);
+        })->with(['stagiaire', 'stage']);
 
         if ($request->filled('stagiaire_id')) {
             $query->where('stagiaire_id', $request->stagiaire_id);
@@ -36,7 +38,7 @@ class ObjectifController extends Controller
             'date_limite'  => 'nullable|date',
         ]);
 
-        $stagiaire = Stagiaire::findOrFail($data['stagiaire_id']);
+        $stagiaire = Stagiaire::where('encadrant_id', auth()->id())->findOrFail($data['stagiaire_id']);
         $latestStage = $stagiaire->stages()->latest()->first();
         if ($latestStage) {
             $data['stage_id'] = $latestStage->id;
@@ -72,6 +74,7 @@ class ObjectifController extends Controller
 
     public function destroy(Objectif $objectif)
     {
+        abort_if($objectif->stagiaire && $objectif->stagiaire->encadrant_id && $objectif->stagiaire->encadrant_id !== auth()->id(), 403);
         $objectif->delete();
         return redirect()->back()->with('success', 'Objectif supprimé.');
     }

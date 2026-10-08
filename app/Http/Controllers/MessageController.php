@@ -12,7 +12,11 @@ class MessageController extends Controller
 {
     public function index()
     {
-        $messages = Message::with('stagiaire', 'reponses')
+        $encadrantId = auth()->id();
+        $messages = Message::whereHas('stagiaire', function ($q) use ($encadrantId) {
+                $q->where('encadrant_id', $encadrantId);
+            })
+            ->with('stagiaire', 'reponses')
             ->where('expediteur', 'stagiaire')
             ->latest()
             ->get();
@@ -43,6 +47,8 @@ class MessageController extends Controller
 
     public function reply(Request $request, Message $message)
     {
+        abort_if($message->stagiaire && $message->stagiaire->encadrant_id && $message->stagiaire->encadrant_id !== auth()->id(), 403);
+
         $request->validate(['reponse' => 'required|string|max:2000']);
 
         Reponse::create([

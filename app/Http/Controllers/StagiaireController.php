@@ -13,10 +13,14 @@ class StagiaireController extends Controller
     public function index(Request $request)
     {
         $search     = $request->input('search');
-        $stagiaires = Stagiaire::when($search, function ($q) use ($search) {
-            $q->where('nom', 'like', "%$search%")
-              ->orWhere('prenom', 'like', "%$search%");
-        })->orderBy('nom')->get();
+        $stagiaires = Stagiaire::where('encadrant_id', auth()->id())
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nom', 'like', "%$search%")
+                        ->orWhere('prenom', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%");
+                });
+            })->orderBy('nom')->get();
 
         return view('encadrant.stagiaires.index', compact('stagiaires', 'search'));
     }
@@ -54,7 +58,8 @@ class StagiaireController extends Controller
         }
 
         $plainPassword    = !empty($data['password']) ? $data['password'] : 'stagiaire123';
-        $data['password'] = bcrypt($plainPassword);
+        $data['password']     = bcrypt($plainPassword);
+        $data['encadrant_id'] = auth()->id();
 
         DB::transaction(function () use ($data, $plainPassword) {
             $stagiaire = Stagiaire::create($data);
@@ -72,22 +77,26 @@ class StagiaireController extends Controller
         });
 
         return redirect()->route('encadrant.stagiaires.index')
-            ->with('success', 'Stagiaire ajouté avec succès.');
+            ->with('success', 'Stagiaire ajouté avec succès et assigné à votre compte.');
     }
 
     public function show(Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
         $stagiaire->load('stages', 'presences');
         return view('encadrant.stagiaires.show', compact('stagiaire'));
     }
 
     public function edit(Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
         return view('encadrant.stagiaires.edit', compact('stagiaire'));
     }
 
     public function update(Request $request, Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
+
         $data = $request->validate([
             'sexe'          => 'required|in:M,F',
             'nom'           => 'required|string|max:255',
@@ -137,6 +146,8 @@ class StagiaireController extends Controller
 
     public function destroy(Stagiaire $stagiaire)
     {
+        abort_if($stagiaire->encadrant_id && $stagiaire->encadrant_id !== auth()->id(), 403);
+
         DB::transaction(function () use ($stagiaire) {
             if ($stagiaire->photo) {
                 Storage::disk('public')->delete($stagiaire->photo);

@@ -43,23 +43,56 @@
         </a>
     </div>
 
+    <!-- WhatsApp Onboarding Notification Alert -->
+    @if(session('whatsapp_link'))
+        <div class="glass-panel p-5 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 space-y-3">
+            <div class="flex items-start justify-between gap-4">
+                <div class="space-y-1">
+                    <p class="font-bold text-base flex items-center gap-2 text-emerald-200">
+                        <i class="fa-brands fa-whatsapp text-2xl text-emerald-400"></i>
+                        Compte Encadrant prêt pour {{ session('encadrant_nom', 'l\'encadrant') }} !
+                    </p>
+                    <p class="text-sm text-emerald-300/90">
+                        Envoyez directement à l'encadrant son message de bienvenue avec ses identifiants de connexion (Matricule, Email, Mot de passe).
+                    </p>
+                </div>
+                <a href="{{ session('whatsapp_link') }}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition shrink-0 animate-pulse">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Envoyer les identifiants sur WhatsApp
+                </a>
+            </div>
+        </div>
+    @endif
+
     <!-- Password Reset Notification Alert -->
     @if(session('reset_user'))
-        <div class="glass-panel p-4 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 text-sm space-y-1">
-            <p class="font-bold flex items-center gap-2">
-                <i class="fa-solid fa-key"></i> Mot de passe réinitialisé pour {{ session('reset_user') }}
-            </p>
-            <p class="font-mono text-base font-bold bg-slate-900 inline-block px-3 py-1 rounded border border-slate-700 select-all">
-                {{ session('temp_password') }}
-            </p>
-            <p class="text-xs text-slate-400">Transmettez ce mot de passe temporaire à l'encadrant.</p>
+        <div class="glass-panel p-5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 text-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1">
+                    <p class="font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> Mot de passe réinitialisé pour {{ session('reset_user') }}
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-slate-400">Nouveau mot de passe temporaire :</span>
+                        <span class="font-mono text-base font-bold bg-slate-900 px-3 py-1 rounded border border-slate-700 select-all text-amber-200">
+                            {{ session('temp_password') }}
+                        </span>
+                    </div>
+                </div>
+                @if(session('whatsapp_link'))
+                    <a href="{{ session('whatsapp_link') }}" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0">
+                        <i class="fa-brands fa-whatsapp text-base"></i> Envoyer le nouveau pass via WhatsApp
+                    </a>
+                @endif
+            </div>
         </div>
     @endif
 
     <!-- Search Bar -->
     <div class="glass-panel p-4 rounded-2xl">
         <form method="GET" class="flex gap-3">
-            <input type="text" name="search" value="{{ $search }}" placeholder="Rechercher par nom, email ou matricule..." class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Rechercher par nom, email, téléphone ou matricule..." class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500">
             <button type="submit" class="gradient-bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition">
                 Rechercher
             </button>
@@ -74,8 +107,8 @@
                     <tr>
                         <th class="px-5 py-4">Nom & Prénom</th>
                         <th class="px-5 py-4">Matricule</th>
-                        <th class="px-5 py-4">Email</th>
-                        <th class="px-5 py-4">Rôle</th>
+                        <th class="px-5 py-4">Contact & WhatsApp</th>
+                        <th class="px-5 py-4">Stagiaires</th>
                         <th class="px-5 py-4 text-right">Actions</th>
                     </tr>
                 </thead>
@@ -91,17 +124,34 @@
                                 </div>
                             </td>
                             <td class="px-5 py-4 font-mono text-xs text-indigo-300 font-semibold">{{ $enc->matricule }}</td>
-                            <td class="px-5 py-4 text-slate-300">{{ $enc->email }}</td>
                             <td class="px-5 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                                    Encadrant
+                                <div class="space-y-1">
+                                    <div class="text-xs text-slate-300">{{ $enc->email }}</div>
+                                    @if($enc->telephone)
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-mono text-slate-400">{{ $enc->telephone }}</span>
+                                            <a href="{{ \App\Helpers\WhatsAppHelper::messageLink($enc->telephone, "Bonjour {$enc->nom}, concernant votre compte encadrant sur StageTrack...") }}" 
+                                               target="_blank" rel="noopener noreferrer"
+                                               title="Contacter sur WhatsApp"
+                                               class="inline-flex items-center gap-1 text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30 transition">
+                                                <i class="fa-brands fa-whatsapp"></i> Chat
+                                            </a>
+                                        </div>
+                                    @else
+                                        <span class="text-[11px] text-slate-500 italic">Pas de numéro</span>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                                    {{ $enc->stagiaires->count() }} stagiaire(s)
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-right space-x-2">
                                 <form action="{{ route('admin.encadrants.reset_password', $enc) }}" method="POST" class="inline-block" onsubmit="return confirm('Réinitialiser le mot de passe de cet encadrant ?')">
                                     @csrf
-                                    <button class="bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-                                        <i class="fa-solid fa-key"></i> Reset Pass
+                                    <button class="bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition" title="Réinitialiser le mot de passe">
+                                        <i class="fa-solid fa-key"></i> Reset
                                     </button>
                                 </form>
                                 <a href="{{ route('admin.encadrants.edit', $enc) }}" class="bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition inline-block">

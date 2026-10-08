@@ -48,7 +48,15 @@ class DemandeStageController extends Controller
 
     public function index()
     {
-        $demandes = DemandeStage::latest()->get();
+        $encadrantId = auth()->id();
+        $demandes = DemandeStage::with('encadrant')
+            ->where(function ($q) use ($encadrantId) {
+                $q->where('etat', 'En attente')
+                  ->orWhere('encadrant_id', $encadrantId);
+            })
+            ->latest()
+            ->get();
+
         return view('encadrant.demandes.index', compact('demandes'));
     }
 
@@ -66,25 +74,29 @@ class DemandeStageController extends Controller
                 ->with('error', 'Cette demande a déjà été validée.');
         }
 
-        $password  = $request->input('password');
-        $matricule = null;
+        $password    = $request->input('password');
+        $matricule   = null;
+        $encadrantId = auth()->id();
 
         try {
-            DB::transaction(function () use ($demande, $password, &$matricule) {
+            DB::transaction(function () use ($demande, $password, &$matricule, $encadrantId) {
                 // Évite doublon stagiaire
                 $stagiaire = Stagiaire::where('email', $demande->email)->first();
                 if (!$stagiaire) {
                     $stagiaire = Stagiaire::create([
-                        'sexe'      => $demande->sexe,
-                        'nom'       => $demande->nom,
-                        'prenom'    => $demande->prenom,
-                        'telephone' => $demande->telephone ?? '',
-                        'email'     => $demande->email,
-                        'password'  => bcrypt($password),
-                        'photo'     => $demande->photo,
-                        'lieu'      => $demande->lieu,
-                        'filiere'   => $demande->filiere,
+                        'sexe'         => $demande->sexe,
+                        'nom'          => $demande->nom,
+                        'prenom'       => $demande->prenom,
+                        'telephone'    => $demande->telephone ?? '',
+                        'email'        => $demande->email,
+                        'password'     => bcrypt($password),
+                        'photo'        => $demande->photo,
+                        'lieu'         => $demande->lieu,
+                        'filiere'      => $demande->filiere,
+                        'encadrant_id' => $encadrantId,
                     ]);
+                } else {
+                    $stagiaire->update(['encadrant_id' => $encadrantId]);
                 }
 
                 $year      = date('Y');
@@ -102,7 +114,11 @@ class DemandeStageController extends Controller
                     ]);
                 }
 
-                $demande->update(['etat' => 'Validée', 'mot_de_passe' => bcrypt($password)]);
+                $demande->update([
+                    'etat'         => 'Validée',
+                    'mot_de_passe' => bcrypt($password),
+                    'encadrant_id' => $encadrantId,
+                ]);
             });
         } catch (\Exception $e) {
             return redirect()->back()
@@ -115,13 +131,16 @@ class DemandeStageController extends Controller
             : null;
 
         return redirect()->route('encadrant.demandes.index')
-            ->with('success', 'Demande validée. Matricule : ' . $matricule)
+            ->with('success', 'Demande validée et stagiaire attribué à votre portefeuille. Matricule : ' . $matricule)
             ->with('whatsapp_link', $waLink);
     }
 
     public function refuse(DemandeStage $demande)
     {
-        $demande->update(['etat' => 'Refusée']);
+        $demande->update([
+            'etat'         => 'Refusée',
+            'encadrant_id' => auth()->id(),
+        ]);
         return redirect()->route('encadrant.demandes.index')
             ->with('success', 'Demande refusée.');
     }

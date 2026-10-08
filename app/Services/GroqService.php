@@ -54,8 +54,35 @@ class GroqService
         ], 1024);
     }
 
+    public function analyseDossierCandidat(array $demandeData, string $lettreMotivationText = ''): string
+    {
+        $infoLettre = !empty($lettreMotivationText)
+            ? "\n=== Extrait de la Lettre de motivation ===\n{$lettreMotivationText}\n=== Fin ==="
+            : "\n(Note : Le document CV fourni est une numérisation/scan d'image sans texte sélectionnable).";
+
+        return $this->chat([
+            ['role' => 'system', 'content' => 'Tu es un assistant RH expert en recrutement et évaluation de profils de stagiaires. Réponds en français de façon structurée et bienveillante.'],
+            ['role' => 'user',   'content' =>
+                "Évalue cette candidature de stage d'après les éléments disponibles du dossier :\n"
+                . "- Candidat(e) : {$demandeData['prenom']} {$demandeData['nom']} ({$demandeData['sexe']})\n"
+                . "- Filière académique : {$demandeData['filiere']}\n"
+                . "- Établissement / Lieu : {$demandeData['lieu']}\n"
+                . "- Période souhaitée : du {$demandeData['date_debut']} au {$demandeData['date_fin']}\n"
+                . "- Contact : {$demandeData['email']} / {$demandeData['telephone']}\n"
+                . $infoLettre . "\n\n"
+                . "Fournis une évaluation structurée pour l'encadrant :\n"
+                . "1. **Profil et Formation académique**\n"
+                . "2. **Compétences clés attendues pour cette filière**\n"
+                . "3. **Points forts du profil**\n"
+                . "4. **Avis d'adéquation pour le stage** (note indicative /10 avec justification)\n"
+                . "5. **Recommandations pour l'entretien d'accueil** (3 questions clés à lui poser)",
+            ],
+        ], 1024);
+    }
+
     public function rapportPerformance(array $stagiaire, float $tauxPresence, int $absences, array $stages): string
     {
+
         $stagesTexte = empty($stages)
             ? 'Aucun stage enregistré'
             : collect($stages)->map(fn($s) => "{$s['theme']} chez {$s['etablissement']}")->join(', ');

@@ -14,9 +14,11 @@ class User extends Authenticatable
         'nom',
         'matricule',
         'email',
+        'telephone',
         'password',
         'role',
     ];
+
 
     protected $hidden = [
         'password',
@@ -49,4 +51,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'encadrant_id');
     }
+
+    public function stagiaires()
+    {
+        return $this->hasMany(Stagiaire::class, 'encadrant_id');
+    }
 }
+

@@ -74,6 +74,7 @@
                     <tr>
                         <th class="px-5 py-4">Stagiaire</th>
                         <th class="px-5 py-4">Filière / Lieu</th>
+                        <th class="px-5 py-4">Encadrant assigné</th>
                         <th class="px-5 py-4">Contact</th>
                         <th class="px-5 py-4">Genre</th>
                         <th class="px-5 py-4 text-right">Actions</th>
@@ -100,6 +101,15 @@
                             <td class="px-5 py-4 text-xs">
                                 <span class="font-semibold text-indigo-300 block">{{ $stg->filiere ?? 'N/A' }}</span>
                                 <span class="text-slate-400">{{ $stg->lieu ?? 'N/A' }}</span>
+                            </td>
+                            <td class="px-5 py-4 text-xs">
+                                @if($stg->encadrant)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                                        <i class="fa-solid fa-user-tie text-[10px]"></i> {{ $stg->encadrant->nom }}
+                                    </span>
+                                @else
+                                    <span class="text-slate-500 italic text-xs">Non assigné</span>
+                                @endif
                             </td>
                             <td class="px-5 py-4 text-slate-300 text-xs font-mono">
                                 {{ $stg->telephone ?? 'Non renseigné' }}
